@@ -1,0 +1,42 @@
+# {{APP_NAME}}
+
+A personal web application built with Go + HTMX.
+
+## Development
+
+```bash
+# Run locally
+go run main.go
+
+# Access at http://localhost:{{APP_PORT}}
+```
+
+## Configuration
+
+Edit `config.yaml` to add users:
+
+```yaml
+users:
+  - username: yourname
+    password_hash: $2a$10$...  # Generate with ../../scripts/hash-password.sh
+```
+
+## Building
+
+```bash
+# Build binary
+go build -o {{APP_NAME}} .
+
+# Run
+./{{APP_NAME}}
+```
+
+## Docker
+
+```bash
+# Build image
+docker build -t {{APP_NAME}} .
+
+# Run container
+docker run -p {{APP_PORT}}:{{APP_PORT}} -v $(pwd)/data:/root/data {{APP_NAME}}
+```

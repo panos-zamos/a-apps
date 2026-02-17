@@ -1,0 +1,12 @@
+package handlers
+
+// Migrations contains SQL migration scripts
+var Migrations = []string{
+	`CREATE TABLE IF NOT EXISTS users (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		username TEXT NOT NULL UNIQUE,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	)`,
+	// Add more migrations here
+}

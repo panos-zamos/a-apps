@@ -1,0 +1,9 @@
+app_name: "{{APP_NAME}}"
+port: {{APP_PORT}}
+database_url: "data/{{APP_NAME}}.db"
+
+# Users who can access this application
+# Generate password hashes with: ./scripts/hash-password.sh yourpassword
+users:
+  - username: panos
+    password_hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"  # password: demo123

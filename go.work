@@ -1,0 +1,9 @@
+go 1.21
+
+use (
+	./shared/auth
+	./shared/database
+	./shared/templates
+	./shared/models
+	./apps/shopping-list
+)

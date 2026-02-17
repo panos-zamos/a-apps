@@ -1,0 +1,101 @@
+package handlers
+
+import (
+	"html/template"
+	"net/http"
+
+	"github.com/panos/a-apps/shared/auth"
+	"github.com/panos/a-apps/shared/database"
+	"github.com/panos/a-apps/shared/models"
+	sharedTemplates "github.com/panos/a-apps/shared/templates"
+)
+
+// Handler holds dependencies for HTTP handlers
+type Handler struct {
+	DB        *database.DB
+	Users     []models.UserFromConfig
+	JWTSecret string
+	Templates *template.Template
+}
+
+// LoginPage renders the login page
+func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.New("login").Parse(sharedTemplates.LoginHTML))
+	data := map[string]interface{}{
+		"AppName": "{{APP_NAME}}",
+		"Error":   r.URL.Query().Get("error"),
+	}
+	tmpl.Execute(w, data)
+}
+
+// Login handles login form submission
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	valid, err := auth.ValidateCredentials(username, password, h.Users)
+	if !valid || err != nil {
+		http.Redirect(w, r, "/login?error=Invalid credentials", http.StatusSeeOther)
+		return
+	}
+
+	// Generate token
+	token, err := auth.GenerateToken(username, h.JWTSecret)
+	if err != nil {
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		return
+	}
+
+	// Set cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "auth_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		MaxAge:   86400, // 24 hours
+	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// Logout handles logout
+func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "auth_token",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}
+
+// HealthCheck returns OK for health checks
+func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
+}
+
+// Home renders the home page
+func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
+	username, _ := auth.GetUsername(r)
+	
+	data := map[string]interface{}{
+		"Title":    "{{APP_NAME}}",
+		"AppName":  "{{APP_NAME}}",
+		"Username": username,
+		"Content":  template.HTML(h.homeContent()),
+	}
+
+	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
+	tmpl.Execute(w, data)
+}
+
+func (h *Handler) homeContent() string {
+	return `
+		<div class="px-4 py-8">
+			<h2 class="text-2xl font-bold text-gray-900 mb-4">Welcome to {{APP_NAME}}</h2>
+			<p class="text-gray-600">This is a template application. Add your functionality here.</p>
+		</div>
+	`
+}
