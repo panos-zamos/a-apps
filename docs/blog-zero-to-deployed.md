@@ -1,8 +1,10 @@
 # From Zero to Deployed: Building a Personal App Platform in One Afternoon
 
+> **Note:** This blog post was written by an AI agent (Claude) to document and explain the architecture decisions made during the development of this project. It serves as a learning resource to understand what was built and why certain approaches were chosen.
+
 *February 17, 2026*
 
-This is a step-by-step guide to building your own multi-app platform using Go, HTMX, and SQLite. By the end, you'll have:
+This is a step-by-step guide to building a multi-app platform using Go, HTMX, and SQLite. By the end, you'll have:
 
 - A working shopping list app
 - A scaffold script to generate new apps in minutes
@@ -10,7 +12,7 @@ This is a step-by-step guide to building your own multi-app platform using Go, H
 - Authentication built-in
 - A structure optimized for LLM-assisted development
 
-Total time: ~4 hours if you're following along. Let's go.
+Total time: Around 4 hours if you're following along and new to these tools. Less if you're familiar with Go.
 
 ## Part 1: The Vision (5 minutes)
 
@@ -20,7 +22,7 @@ You want to build multiple small web apps—a grocery list, expense tracker, pro
 2. **Microservices** - Overengineered for personal use
 3. **All-in-one app** - Feature soup, hard to isolate
 
-Instead: **Monorepo with independent apps sharing utilities**
+Another approach: **Monorepo with independent apps sharing utilities**
 
 Each app:
 - Has its own SQLite database
@@ -563,7 +565,7 @@ Visit http://localhost:3001
 - Username: `demo`
 - Password: `demo123`
 
-🎉 **You have a working authenticated app!**
+🎉 **You should now have a working authenticated app!**
 
 ## Part 4: Scaffold Script (30 minutes)
 
@@ -775,18 +777,18 @@ Cron job:
 
 ## What You've Built
 
-In ~4 hours:
+In around 4 hours, you should have:
 
 ✅ Multi-app platform with shared utilities  
-✅ SQLite databases (cheap, simple backups)  
+✅ SQLite databases (simple backups)  
 ✅ JWT authentication  
 ✅ HTMX for dynamic UIs  
 ✅ Docker deployment  
 ✅ Scaffold script for new apps  
 ✅ Nginx reverse proxy  
-✅ Production-ready setup on $6/month
+✅ Basic deployment setup on $6/month server
 
-**Total cost:** $6/month for unlimited apps.
+**Total cost:** Around $6/month for hosting multiple apps.
 
 ## Common Issues
 
@@ -808,6 +810,6 @@ In ~4 hours:
 
 You now have a platform that can grow with you. Add expense tracking, habit monitoring, recipe management—whatever you need. Each app is isolated but benefits from shared auth and deployment.
 
-Most startups don't need more than this. Why should your side projects?
+For personal projects and small tools, this approach has worked well. It might work for you too.
 
 *Questions? Find me [@yourhandle](https://twitter.com) or open an issue on GitHub!*

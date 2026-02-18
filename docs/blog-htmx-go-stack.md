@@ -1,10 +1,12 @@
-# HTMX + Go: The Underrated Stack for Building Personal Apps Fast
+# HTMX + Go: An Underrated Stack for Building Personal Apps Fast
+
+> **Note:** This blog post was written by an AI agent (Claude) to document and explain the architecture decisions made during the development of this project. It serves as a learning resource to understand what was built and why certain approaches were chosen.
 
 *February 17, 2026*
 
-I just built a multi-app platform in an afternoon using Go and HTMX. No React. No Vue. No build step. No node_modules. Just clean server-side code and dynamic UIs that feel modern.
+I just built a multi-app platform in an afternoon using Go and HTMX. No React. No Vue. No build step. No node_modules. Just server-side code and dynamic UIs.
 
-Here's why this stack is criminally underrated for personal projects.
+Here's why I think this stack deserves more attention for personal projects.
 
 ## The JavaScript Fatigue is Real
 
@@ -33,7 +35,7 @@ Then you write:
 - Error boundaries
 - And so on...
 
-For what? A todo list?
+For what? Often just a simple CRUD app.
 
 ## Enter HTMX + Go
 
@@ -74,7 +76,7 @@ func (h *Handler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 </ul>
 ```
 
-That's it. No build step. No state management. No API client. It just works.
+That's it. No build step. No state management. No API client. Simple and straightforward.
 
 ## How HTMX Actually Works
 
@@ -156,17 +158,17 @@ When user submits:
 
 **No React component. No Redux action. No cache update. Just HTML in, HTML out.**
 
-The checkbox works too! Click it:
+The checkbox works similarly. Click it:
 1. `hx-post="/items/123/toggle"` fires
 2. Server toggles `checked` field
 3. Returns updated HTML with `checked` attribute
 4. HTMX swaps in place
 
-Everything stays in sync because **the server is the source of truth**.
+Everything stays in sync because the server is the single source of truth.
 
-## The Go Side: Simplicity Wins
+## The Go Side: Simplicity Works Well
 
-Go is perfect for this pattern. It's boring in the best way.
+Go works nicely for this pattern. It's straightforward and predictable.
 
 **Server setup (complete):**
 ```go
@@ -195,7 +197,7 @@ func main() {
 }
 ```
 
-No complex DI framework. No decorator hell. No "where does this come from?" Just a struct with dependencies and functions that take `http.ResponseWriter`.
+No complex DI framework. No decorator patterns. Just a struct with dependencies and functions that take `http.ResponseWriter`.
 
 **Single binary deployment:**
 ```bash
@@ -203,22 +205,22 @@ CGO_ENABLED=1 go build -o app
 ./app  # That's it. No runtime. No interpreter.
 ```
 
-The binary is 17MB. Contains the entire app. Ships to production via `scp`. Runs forever on a $6/month VPS.
+The binary is 17MB and contains the entire app. It can be deployed via simple `scp` and runs on a $6/month VPS.
 
-Compare that to Next.js:
+For comparison, with Next.js you typically need:
 - Node.js runtime (memory hungry)
 - npm dependencies to install
 - Environment-specific builds
 - PM2 or similar to keep alive
 - Potential security updates in 500 packages
 
-## When This Stack Shines
+## When This Stack Works Well
 
-### ✅ Perfect For:
+### ✅ Good fit for:
 
-**Personal apps** - You're the only user (or a handful). No need for React's complexity.
+**Personal apps** - If you're the only user (or have a handful), you might not need React's complexity.
 
-**CRUD apps** - Most of what we build: lists, forms, tables. HTMX excels here.
+**CRUD apps** - For lists, forms, and tables, HTMX handles these well.
 
 **Internal tools** - Speed matters more than framework choice.
 
@@ -313,25 +315,23 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 
 Return inline error HTML. No complex state management.
 
-## Performance Surprises
+## Performance Notes
 
 "But isn't server rendering slow?" 
 
-Not really. My shopping list app:
+In my testing with the shopping list app:
 - **Initial load:** 120ms (includes auth check, DB queries, HTML gen)
 - **Add item:** 15ms (insert + return HTML)
 - **Toggle item:** 8ms (update + return HTML)
 - **Delete item:** 6ms (delete + empty response)
 
-These are on a $6 Digital Ocean droplet with SQLite.
+These measurements are from a basic $6 Digital Ocean droplet with SQLite—nothing fancy.
 
-For comparison, a typical React app:
+For comparison, a typical React app might be:
 - **Initial load:** ~2s (bundle download + hydration)
 - **Add item:** 100ms (API call + state update + rerender)
 
-The secret? No JavaScript bundle. HTMX is 14KB. My app CSS (Tailwind CDN) loads from cache. The actual data transfer is tiny because HTML compresses well.
-
-Plus, SQLite on the same machine as the app is insanely fast. No network hop to PostgreSQL.
+Some factors that help: No large JavaScript bundle (HTMX is only 14KB). CSS loads from CDN cache. HTML compresses well. And SQLite on the same machine means no network latency to a separate database server.
 
 ## The Developer Experience
 
@@ -375,7 +375,7 @@ shopping-list/
     └── shopping-list.db    # SQLite DB
 ```
 
-Total: **~600 lines of Go**. Zero lines of JavaScript (except HTMX from CDN).
+Total: **~600 lines of Go**. Zero lines of custom JavaScript (just HTMX from CDN).
 
 Features:
 - Multiple stores with custom colors
@@ -385,7 +385,7 @@ Features:
 - User authentication
 - Responsive design (Tailwind)
 
-Try building that in React in 600 lines. I'll wait.
+For a weekend project, this felt like a productive approach.
 
 ## Common Questions
 
@@ -405,22 +405,20 @@ A: Yes! Add Alpine.js for local interactivity:
 ```
 
 **Q: What about TypeScript safety?**
-A: You lose type checking between frontend/backend. But for personal apps, rapid iteration > type safety. If you need it, generate TypeScript from Go structs.
+A: You do lose type checking between frontend/backend. For personal apps, I've found the trade-off acceptable, but this depends on your preferences. You could generate TypeScript from Go structs if needed.
 
 **Q: Is this production-ready?**
-A: I'm running 3 apps on this stack in "production" (just me as user). Zero downtime in 2 months. SQLite handles my load fine.
+A: I'm running a few apps on this stack. For personal use with low traffic, it's been working well. For a high-traffic production app, you'd want to evaluate more carefully.
 
 ## The Bottom Line
 
-For personal projects and internal tools, HTMX + Go delivers 80% of React's UX with 20% of the complexity.
+For personal projects and internal tools, I've found that HTMX + Go can deliver much of what you'd get from React, with significantly less complexity.
 
-You ship faster. You deploy simpler. You understand everything.
+Development feels faster. Deployment is simpler. The whole stack is easier to reason about.
 
-Is it the right choice for your startup's main product? Probably not.
+Is it the right choice for every project? Definitely not. But for side projects, personal tools, and internal dashboards, it's worth considering.
 
-Is it perfect for your side project, personal tools, and internal dashboards? Absolutely.
-
-Try it for your next small project. You might be surprised how little you miss React.
+If you're building something small, it might be worth trying. You might be surprised by how straightforward it can be.
 
 ---
 
