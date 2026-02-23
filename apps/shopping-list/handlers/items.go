@@ -60,46 +60,39 @@ func (h *Handler) DeleteStore(w http.ResponseWriter, r *http.Request) {
 // NewStoreForm returns the form for creating a new store
 func (h *Handler) NewStoreForm(w http.ResponseWriter, r *http.Request) {
 	html := `
-		<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-			<div class="bg-white rounded-lg p-6 max-w-md w-full">
-				<h3 class="text-xl font-bold mb-4">New Store</h3>
-				<form hx-post="/stores" hx-target="#modal" class="space-y-4">
-					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-1">Store Name</label>
-						<input 
-							type="text" 
-							name="name" 
-							required
-							placeholder="e.g., Supermarket, Pharmacy"
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-						/>
-					</div>
-					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-1">Color</label>
-						<input 
-							type="color" 
-							name="color" 
-							value="#3B82F6"
-							class="w-full h-10 rounded-lg"
-						/>
-					</div>
-					<div class="flex gap-2">
-						<button 
-							type="submit" 
-							class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-						>
-							Create
-						</button>
-						<button 
-							type="button"
-							onclick="this.closest('.fixed').remove()"
-							class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400"
-						>
-							Cancel
-						</button>
-					</div>
-				</form>
-			</div>
+		<div class="panel">
+			<h2>New Store</h2>
+			<form hx-post="/stores" hx-target="#modal" class="mt-md">
+				<label>Store Name</label>
+				<input 
+					type="text" 
+					name="name" 
+					required
+					placeholder="e.g., Supermarket, Pharmacy"
+				/>
+				<div class="mt-md">
+					<label>Color</label>
+					<input 
+						type="color" 
+						name="color" 
+						value="#3B82F6"
+					/>
+				</div>
+				<div class="row mt-md">
+					<button 
+						type="submit" 
+						class="primary"
+					>
+						Create
+					</button>
+					<button 
+						type="button"
+						onclick="this.closest('.panel').remove()"
+					>
+						Cancel
+					</button>
+				</div>
+			</form>
 		</div>
 	`
 	w.Write([]byte(html))
@@ -131,23 +124,23 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 
 	// Return the new item HTML
 	html := fmt.Sprintf(`
-		<div class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
-			<input 
-				type="checkbox"
-				hx-post="/items/%d/toggle"
-				hx-target="closest div"
-				hx-swap="outerHTML"
-				class="h-5 w-5 text-indigo-600 rounded"
-			/>
-			<span class="flex-1">%s</span>
-			<span class="text-sm text-gray-500">%s</span>
+		<div class="row space-between mb-sm">
+			<div class="row">
+				<input 
+					type="checkbox"
+					hx-post="/items/%d/toggle"
+					hx-target="closest .space-between"
+					hx-swap="outerHTML"
+				/>
+				<span>%s</span>
+				<span class="muted">%s</span>
+			</div>
 			<button 
 				hx-delete="/items/%d"
-				hx-target="closest div"
+				hx-target="closest .space-between"
 				hx-swap="outerHTML"
-				class="text-red-600 hover:text-red-800 text-sm"
 			>
-				✕
+				Remove
 			</button>
 		</div>
 	`, itemID, name, quantity, itemID)
@@ -187,35 +180,37 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	checkedAttr := ""
-	checkedClass := ""
+	itemName := name
+	itemQuantity := quantity
 	if checked {
 		checkedAttr = "checked"
-		checkedClass = "line-through text-gray-400"
+		itemName = fmt.Sprintf("<del>%s</del>", name)
+		itemQuantity = fmt.Sprintf("<del>%s</del>", quantity)
 	}
 
 	// Return updated item HTML
 	html := fmt.Sprintf(`
-		<div class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
-			<input 
-				type="checkbox"
-				%s
-				hx-post="/items/%s/toggle"
-				hx-target="closest div"
-				hx-swap="outerHTML"
-				class="h-5 w-5 text-indigo-600 rounded"
-			/>
-			<span class="flex-1 %s">%s</span>
-			<span class="text-sm text-gray-500 %s">%s</span>
+		<div class="row space-between mb-sm">
+			<div class="row">
+				<input 
+					type="checkbox"
+					%s
+					hx-post="/items/%s/toggle"
+					hx-target="closest .space-between"
+					hx-swap="outerHTML"
+				/>
+				<span>%s</span>
+				<span class="muted">%s</span>
+			</div>
 			<button 
 				hx-delete="/items/%s"
-				hx-target="closest div"
+				hx-target="closest .space-between"
 				hx-swap="outerHTML"
-				class="text-red-600 hover:text-red-800 text-sm"
 			>
-				✕
+				Remove
 			</button>
 		</div>
-	`, checkedAttr, itemID, checkedClass, name, checkedClass, quantity, itemID)
+	`, checkedAttr, itemID, itemName, itemQuantity, itemID)
 
 	w.Write([]byte(html))
 }
@@ -240,12 +235,12 @@ func (h *Handler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) storesGrid(stores []Store) string {
-	content := `<div id="stores-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">`
+	content := `<div id="stores-container">`
 
 	if len(stores) == 0 {
 		content += `
-			<div class="col-span-full text-center py-12 text-gray-500">
-				<p class="text-lg">No stores yet. Create your first shopping list!</p>
+			<div class="panel center">
+				<p class="muted">No stores yet. Create your first shopping list!</p>
 			</div>
 		`
 	}
@@ -259,83 +254,82 @@ func (h *Handler) storesGrid(stores []Store) string {
 		}
 
 		content += fmt.Sprintf(`
-			<div class="bg-white rounded-lg shadow p-6 border-t-4" style="border-color: %s">
-				<div class="flex justify-between items-start mb-4">
-					<h3 class="text-xl font-bold text-gray-900">%s</h3>
+			<article class="panel mb-md">
+				<div class="row space-between mb-sm">
+					<h3>%s</h3>
 					<button 
 						hx-delete="/stores/%d" 
 						hx-confirm="Delete this store and all items?"
 						hx-target="#stores-container"
 						hx-swap="outerHTML"
-						class="text-red-600 hover:text-red-800"
 					>
-						🗑️
+						Delete
 					</button>
 				</div>
 				
-				<div class="mb-4 text-sm text-gray-600">
-					%d items to buy
-				</div>
+				<p class="muted">%d items to buy</p>
 
-				<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mb-4">
-					<div class="flex gap-2">
-						<input 
-							type="text" 
-							name="name" 
-							placeholder="Add item..." 
-							required
-							class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-						/>
+				<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
+					<label>Item</label>
+					<input 
+						type="text" 
+						name="name" 
+						placeholder="Add item..." 
+						required
+					/>
+					<div class="mt-sm">
+						<label>Quantity</label>
 						<input 
 							type="text" 
 							name="quantity" 
 							placeholder="Qty" 
-							class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
 						/>
-						<button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-							+
-						</button>
+					</div>
+					<div class="mt-md">
+						<button type="submit" class="primary">Add Item</button>
 					</div>
 				</form>
 
-				<div id="store-%d-items" class="space-y-2">
-		`, store.Color, store.Name, store.ID, uncheckedCount, store.ID, store.ID, store.ID)
+				<div id="store-%d-items" class="mt-md">
+		`, store.Name, store.ID, uncheckedCount, store.ID, store.ID, store.ID)
 
 		for _, item := range store.Items {
-			checkedClass := ""
 			checkedAttr := ""
+			itemName := item.Name
+			itemQuantity := item.Quantity
 			if item.Checked {
-				checkedClass = "line-through text-gray-400"
 				checkedAttr = "checked"
+				itemName = fmt.Sprintf("<del>%s</del>", item.Name)
+				itemQuantity = fmt.Sprintf("<del>%s</del>", item.Quantity)
 			}
 
 			content += fmt.Sprintf(`
-				<div class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
-					<input 
-						type="checkbox" 
-						%s
-						hx-post="/items/%d/toggle"
-						hx-target="closest div"
-						hx-swap="outerHTML"
-						class="h-5 w-5 text-indigo-600 rounded"
-					/>
-					<span class="flex-1 %s">%s</span>
-					<span class="text-sm text-gray-500 %s">%s</span>
+				<div class="row space-between mb-sm">
+					<div class="row">
+						<input 
+							type="checkbox" 
+							%s
+							hx-post="/items/%d/toggle"
+							hx-target="closest .space-between"
+							hx-swap="outerHTML"
+						/>
+						<span>%s</span>
+						<span class="muted">%s</span>
+					</div>
 					<button 
 						hx-delete="/items/%d"
-						hx-target="closest div"
+						hx-target="closest .space-between"
 						hx-swap="outerHTML"
-						class="text-red-600 hover:text-red-800 text-sm"
 					>
-						✕
+						Remove
 					</button>
 				</div>
-			`, checkedAttr, item.ID, checkedClass, item.Name, checkedClass, item.Quantity, item.ID)
+			`, checkedAttr, item.ID, itemName, itemQuantity, item.ID)
 		}
 
 		content += `
 				</div>
-			</div>
+			</article>
 		`
 	}
 

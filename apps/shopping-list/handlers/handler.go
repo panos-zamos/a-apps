@@ -162,25 +162,25 @@ func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
 
 func (h *Handler) homeContent(stores []Store) string {
 	content := `
-		<div class="px-4 py-8">
-			<div class="flex justify-between items-center mb-6">
-				<h2 class="text-2xl font-bold text-gray-900">My Shopping Lists</h2>
+		<section class="mb-lg">
+			<div class="row space-between mb-md">
+				<h2>My Shopping Lists</h2>
 				<button 
+					class="primary"
 					hx-get="/stores/new" 
 					hx-target="#modal"
-					class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
 				>
-					+ New Store
+					New Store
 				</button>
 			</div>
 
-			<div id="stores-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<div id="stores-container">
 	`
 
 	if len(stores) == 0 {
 		content += `
-				<div class="col-span-full text-center py-12 text-gray-500">
-					<p class="text-lg">No stores yet. Create your first shopping list!</p>
+				<div class="panel center">
+					<p class="muted">No stores yet. Create your first shopping list!</p>
 				</div>
 		`
 	}
@@ -194,89 +194,90 @@ func (h *Handler) homeContent(stores []Store) string {
 		}
 
 		content += fmt.Sprintf(`
-				<div class="bg-white rounded-lg shadow p-6 border-t-4" style="border-color: %s">
-					<div class="flex justify-between items-start mb-4">
-						<h3 class="text-xl font-bold text-gray-900">%s</h3>
+				<article class="panel mb-md">
+					<div class="row space-between mb-sm">
+						<h3>%s</h3>
 						<button 
 							hx-delete="/stores/%d" 
 							hx-confirm="Delete this store and all items?"
 							hx-target="#stores-container"
 							hx-swap="outerHTML"
-							class="text-red-600 hover:text-red-800"
 						>
-							🗑️
+							Delete
 						</button>
 					</div>
 					
-					<div class="mb-4 text-sm text-gray-600">
-						%d items to buy
-					</div>
+					<p class="muted">%d items to buy</p>
 
-					<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mb-4">
-						<div class="flex gap-2">
-							<input 
-								type="text" 
-								name="name" 
-								placeholder="Add item..." 
-								required
-								class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-							/>
+					<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
+						<label>Item</label>
+						<input 
+							type="text" 
+							name="name" 
+							placeholder="Add item..." 
+							required
+						/>
+						<div class="mt-sm">
+							<label>Quantity</label>
 							<input 
 								type="text" 
 								name="quantity" 
 								placeholder="Qty" 
-								class="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
 							/>
-							<button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-								+
-							</button>
+						</div>
+						<div class="mt-md">
+							<button type="submit" class="primary">Add Item</button>
 						</div>
 					</form>
 
-					<div id="store-%d-items" class="space-y-2">
-		`, store.Color, store.Name, store.ID, uncheckedCount, store.ID, store.ID, store.ID)
+					<div id="store-%d-items" class="mt-md">
+		`, store.Name, store.ID, uncheckedCount, store.ID, store.ID, store.ID)
 
 		for _, item := range store.Items {
-			checkedClass := ""
+			checkedAttr := ""
+			itemName := item.Name
+			itemQuantity := item.Quantity
 			if item.Checked {
-				checkedClass = "line-through text-gray-400"
+				checkedAttr = "checked"
+				itemName = fmt.Sprintf("<del>%s</del>", item.Name)
+				itemQuantity = fmt.Sprintf("<del>%s</del>", item.Quantity)
 			}
 
 			content += fmt.Sprintf(`
-						<div class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded">
-							<input 
-								type="checkbox" 
-								%s
-								hx-post="/items/%d/toggle"
-								hx-target="closest div"
-								hx-swap="outerHTML"
-								class="h-5 w-5 text-indigo-600 rounded"
-							/>
-							<span class="flex-1 %s">%s</span>
-							<span class="text-sm text-gray-500 %s">%s</span>
+						<div class="row space-between mb-sm">
+							<div class="row">
+								<input 
+									type="checkbox" 
+									%s
+									hx-post="/items/%d/toggle"
+									hx-target="closest .space-between"
+									hx-swap="outerHTML"
+								/>
+								<span>%s</span>
+								<span class="muted">%s</span>
+							</div>
 							<button 
 								hx-delete="/items/%d"
-								hx-target="closest div"
+								hx-target="closest .space-between"
 								hx-swap="outerHTML"
-								class="text-red-600 hover:text-red-800 text-sm"
 							>
-								✕
+								Remove
 							</button>
 						</div>
-			`, map[bool]string{true: "checked", false: ""}[item.Checked], item.ID, checkedClass, item.Name, checkedClass, item.Quantity, item.ID)
+			`, checkedAttr, item.ID, itemName, itemQuantity, item.ID)
 		}
 
 		content += `
 					</div>
-				</div>
+				</article>
 		`
 	}
 
 	content += `
 			</div>
-		</div>
+		</section>
 
-		<div id="modal"></div>
+		<div id="modal" class="mt-lg"></div>
 	`
 
 	return content

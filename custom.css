@@ -1,0 +1,135 @@
+/* ===== Base ===== */
+
+:root {
+  --bg: #f7f7f8;
+  --panel: #ffffff;
+  --border: #e5e5e7;
+  --text: #1f1f1f;
+  --muted: #6b6b6b;
+  --primary: #111111;
+  --primary-text: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ===== Layout ===== */
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  padding: 16px;
+}
+
+.content {
+  flex: 1;
+  padding: 32px;
+}
+
+.content-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ===== Typography ===== */
+
+h1, h2, h3 {
+  margin-top: 0;
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ===== Panels ===== */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+/* ===== Buttons ===== */
+
+button,
+.button {
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+button.primary,
+.button.primary {
+  background: var(--primary);
+  color: var(--primary-text);
+  border: 1px solid var(--primary);
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* ===== Forms ===== */
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  background: var(--panel);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #c9c9cc;
+}
+
+/* ===== Utilities (Allowed Set) ===== */
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 16px; }
+.mt-lg { margin-top: 24px; }
+
+.mb-sm { margin-bottom: 8px; }
+.mb-md { margin-bottom: 16px; }
+.mb-lg { margin-bottom: 24px; }
+
+.center {
+  text-align: center;
+}

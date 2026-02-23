@@ -62,6 +62,9 @@ func main() {
 	r.Post("/login", h.Login)
 	r.Post("/logout", h.Logout)
 	r.Get("/health", h.HealthCheck)
+	r.Get("/custom.css", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "../../custom.css")
+	})
 
 	// Protected routes
 	r.Group(func(r chi.Router) {
