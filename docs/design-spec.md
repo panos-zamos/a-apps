@@ -1,7 +1,3 @@
-Here is the content for `design-spec.md`:
-
----
-
 # Design Spec – AI Agent UI Contract
 
 This document defines strict UI rules for this Go + HTMX project.

@@ -12,6 +12,7 @@ import (
 	"github.com/panos/a-apps/shared/auth"
 	"github.com/panos/a-apps/shared/database"
 	"github.com/panos/a-apps/shared/models"
+	sharedTemplates "github.com/panos/a-apps/shared/templates"
 )
 
 func main() {
@@ -62,9 +63,7 @@ func main() {
 	r.Post("/login", h.Login)
 	r.Post("/logout", h.Logout)
 	r.Get("/health", h.HealthCheck)
-	r.Get("/custom.css", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../../custom.css")
-	})
+	r.Get("/custom.css", sharedTemplates.CustomCSSHandler())
 
 	// Protected routes
 	r.Group(func(r chi.Router) {
