@@ -1,0 +1,14 @@
+{
+  "latest_trace": "trace-1.json",
+  "sessions": [
+    {
+      "task": {
+        "id": null,
+        "title": "Read scaffold app platform prompt and report project status"
+      },
+      "started_at": "2026-02-23T18:52:17Z",
+      "ended_at": "2026-02-23T19:03:10Z",
+      "trace": "trace-1.json"
+    }
+  ]
+}

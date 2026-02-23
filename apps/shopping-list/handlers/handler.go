@@ -149,11 +149,11 @@ func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
 	var items []Item
 	for rows.Next() {
 		var item Item
-		var checked int
+		var checked bool
 		if err := rows.Scan(&item.ID, &item.Name, &item.Quantity, &checked); err != nil {
 			continue
 		}
-		item.Checked = checked == 1
+		item.Checked = checked
 		items = append(items, item)
 	}
 

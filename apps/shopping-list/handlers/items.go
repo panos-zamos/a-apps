@@ -174,7 +174,7 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 
 	// Get updated item
 	var name, quantity string
-	var checked int
+	var checked bool
 	err = h.DB.QueryRow(`
 		SELECT name, quantity, checked 
 		FROM items 
@@ -188,7 +188,7 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 
 	checkedAttr := ""
 	checkedClass := ""
-	if checked == 1 {
+	if checked {
 		checkedAttr = "checked"
 		checkedClass = "line-through text-gray-400"
 	}
