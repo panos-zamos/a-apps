@@ -1,5 +1,5 @@
 {
-  "latest_trace": "trace-4.json",
+  "latest_trace": "trace-5.json",
   "sessions": [
     {
       "task": {
@@ -36,6 +36,15 @@
       "started_at": "2026-02-23T20:26:00Z",
       "ended_at": "2026-02-23T20:33:40Z",
       "trace": "trace-4.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Document UI contract migration as a short technical blog"
+      },
+      "started_at": "2026-02-23T20:36:00Z",
+      "ended_at": "2026-02-23T20:37:40Z",
+      "trace": "trace-5.json"
     }
   ]
 }
