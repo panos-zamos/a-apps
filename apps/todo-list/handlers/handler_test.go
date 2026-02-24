@@ -13,7 +13,7 @@ import (
 
 func TestHomeRendersSavedItems(t *testing.T) {
 	tempDir := t.TempDir()
-	dbPath := filepath.Join(tempDir, "shopping-list.db")
+	dbPath := filepath.Join(tempDir, "todo-list.db")
 
 	db, err := database.Open(dbPath)
 	if err != nil {

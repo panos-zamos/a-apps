@@ -1,4 +1,4 @@
-module github.com/panos/a-apps/apps/shopping-list
+module github.com/panos/a-apps/apps/todo-list
 
 go 1.21
 

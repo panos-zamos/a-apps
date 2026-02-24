@@ -361,10 +361,10 @@ No webpack. No node_modules. No waiting for rebuilds. Just code → refresh → 
 
 ## Real Project Structure
 
-Here's my actual shopping list app:
+Here's my actual todo list app:
 
 ```
-shopping-list/
+todo-list/
 ├── main.go                  # 50 lines
 ├── handlers/
 │   ├── handler.go          # Auth, home page
@@ -372,7 +372,7 @@ shopping-list/
 │   └── migrations.go       # DB schema
 ├── config.yaml             # Users list
 └── data/
-    └── shopping-list.db    # SQLite DB
+    └── todo-list.db        # SQLite DB
 ```
 
 Total: **~600 lines of Go**. Zero lines of custom JavaScript (just HTMX from CDN).

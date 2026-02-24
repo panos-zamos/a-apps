@@ -22,7 +22,7 @@ type Handler struct {
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.New("login").Parse(sharedTemplates.LoginHTML))
 	data := map[string]interface{}{
-		"AppName": "shopping-list",
+		"AppName": "todo-list",
 		"Error":   r.URL.Query().Get("error"),
 	}
 	tmpl.Execute(w, data)
@@ -84,8 +84,8 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	stores, _ := h.getStores(username)
 
 	data := map[string]interface{}{
-		"Title":    "Shopping List",
-		"AppName":  "Shopping List",
+		"Title":    "Todo List",
+		"AppName":  "Todo List",
 		"Username": username,
 		"Content":  template.HTML(h.homeContent(stores)),
 	}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/panos/a-apps/apps/shopping-list/handlers"
+	"github.com/panos/a-apps/apps/todo-list/handlers"
 	"github.com/panos/a-apps/shared/auth"
 	"github.com/panos/a-apps/shared/database"
 	"github.com/panos/a-apps/shared/models"
@@ -28,7 +28,7 @@ func main() {
 	}
 
 	// Open database
-	db, err := database.Open("data/shopping-list.db")
+	db, err := database.Open("data/todo-list.db")
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
 	}
@@ -83,7 +83,7 @@ func main() {
 
 	// Start server
 	addr := fmt.Sprintf(":%s", port)
-	log.Printf("shopping-list starting on %s", addr)
+	log.Printf("todo-list starting on %s", addr)
 	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatal(err)
 	}

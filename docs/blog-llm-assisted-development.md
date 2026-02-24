@@ -28,7 +28,7 @@ This looks clean, but when working with an LLM, there are several things that ar
 - What's `set_item`? (Private method defined... somewhere)
 - What validations run? (In the model, not visible here)
 
-Now compare this Go version from my shopping-list app:
+Now compare this Go version from my todo-list app:
 
 ```go
 func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +71,7 @@ When I ask an LLM to "add quantity field to items," it can often see the entire 
 
 My original instinct was to organize like this:
 ```
-shopping-list/
+todo-list/
 ├── internal/
 │   ├── domain/
 │   │   ├── item/
@@ -93,7 +93,7 @@ shopping-list/
 
 Instead, I went flat:
 ```
-shopping-list/
+todo-list/
 ├── main.go
 ├── handlers/
 │   ├── handler.go
@@ -121,10 +121,10 @@ sed -e "s/{{APP_NAME}}/$APP_NAME/g" \
 
 Simple? Yes. But it enables something useful: I can tell an LLM:
 
-> "Generate a habit tracker app. Reference shopping-list for patterns. The scaffold already created the base structure."
+> "Generate a habit tracker app. Reference todo-list for patterns. The scaffold already created the base structure."
 
 The LLM now has:
-1. A working example (shopping-list)
+1. A working example (todo-list)
 2. A consistent structure (from template)
 3. Shared packages it can import
 

@@ -56,7 +56,7 @@ A monorepo for hosting multiple small web applications with minimal friction. Bu
 ```
 a-apps/
 ├── apps/                    # Individual applications
-│   ├── shopping-list/      # Example: Multi-store shopping list
+│   ├── todo-list/          # Example: Multi-store shopping list
 │   ├── expense-tracker/    # Example: Personal expense tracking
 │   └── project-tracker/    # Example: Hobby project progress
 ├── shared/                  # Shared code across apps

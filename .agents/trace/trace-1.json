@@ -22,7 +22,7 @@
       "step_id": 2,
       "type": "research",
       "actor": "agent",
-      "summary": "Reviewed scaffold prompt requirements and repo structure (README.md, Makefile, deploy/.env.example, apps/shopping-list).",
+      "summary": "Reviewed scaffold prompt requirements and repo structure (README.md, Makefile, deploy/.env.example, apps/todo-list).",
       "timestamp": "2026-02-23T18:54:40Z"
     },
     {
@@ -36,35 +36,35 @@
       "step_id": 4,
       "type": "research",
       "actor": "agent",
-      "summary": "Inspected shopping-list handlers and shared database code to verify persistence behavior on page load (handlers/handler.go, handlers/items.go, shared/database/sqlite.go).",
+      "summary": "Inspected todo-list handlers and shared database code to verify persistence behavior on page load (handlers/handler.go, handlers/items.go, shared/database/sqlite.go).",
       "timestamp": "2026-02-23T18:56:30Z"
     },
     {
       "step_id": 5,
       "type": "prompt",
       "actor": "human",
-      "summary": "Request: run a test to confirm shopping-list returns saved items on page load.",
+      "summary": "Request: run a test to confirm todo-list returns saved items on page load.",
       "timestamp": "2026-02-23T18:58:10Z"
     },
     {
       "step_id": 6,
       "type": "implementation",
       "actor": "agent",
-      "summary": "Added handler-level test to seed SQLite data and verify Home renders saved items; fixed item scan to use bool so saved items load correctly (apps/shopping-list/handlers/handler_test.go, handler.go, items.go).",
+      "summary": "Added handler-level test to seed SQLite data and verify Home renders saved items; fixed item scan to use bool so saved items load correctly (apps/todo-list/handlers/handler_test.go, handler.go, items.go).",
       "timestamp": "2026-02-23T19:02:40Z"
     },
     {
       "step_id": 7,
       "type": "test",
       "actor": "agent",
-      "summary": "Ran go test ./apps/shopping-list/handlers (pass).",
+      "summary": "Ran go test ./apps/todo-list/handlers (pass).",
       "timestamp": "2026-02-23T19:03:00Z"
     }
   ],
   "evaluations": {
     "tests_run": true,
     "lint_passed": false,
-    "notes": "go test ./apps/shopping-list/handlers"
+    "notes": "go test ./apps/todo-list/handlers"
   },
-  "final_summary": "Confirmed shopping-list persistence by adding a handler test and fixing bool scanning of the checked column so items load on page render."
+  "final_summary": "Confirmed todo-list persistence by adding a handler test and fixing bool scanning of the checked column so items load on page render."
 }

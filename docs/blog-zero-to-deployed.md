@@ -342,14 +342,14 @@ cd ../..
 ### Create App Structure
 
 ```bash
-mkdir -p apps/shopping-list/{handlers,data}
-cd apps/shopping-list
+mkdir -p apps/todo-list/{handlers,data}
+cd apps/todo-list
 ```
 
 ### go.mod
 
 ```go
-module github.com/yourusername/a-apps/apps/shopping-list
+module github.com/yourusername/a-apps/apps/todo-list
 go 1.21
 
 require (
@@ -482,7 +482,7 @@ import (
 
     "github.com/go-chi/chi/v5"
     "github.com/go-chi/chi/v5/middleware"
-    "github.com/yourusername/a-apps/apps/shopping-list/handlers"
+    "github.com/yourusername/a-apps/apps/todo-list/handlers"
     "github.com/yourusername/a-apps/shared/auth"
     "github.com/yourusername/a-apps/shared/database"
 )
@@ -498,7 +498,7 @@ func main() {
         port = "3001"
     }
 
-    db, err := database.Open("data/shopping-list.db")
+    db, err := database.Open("data/todo-list.db")
     if err != nil {
         log.Fatal(err)
     }
@@ -549,16 +549,16 @@ users:
 Back in root directory:
 ```bash
 cd ../..
-echo "./apps/shopping-list" >> go.work
+echo "./apps/todo-list" >> go.work
 ```
 
 ### Run It!
 
 ```bash
-cd apps/shopping-list
+cd apps/todo-list
 go mod tidy
 go build
-./shopping-list
+./todo-list
 ```
 
 Visit http://localhost:3001
@@ -588,11 +588,11 @@ echo "Creating $APP_NAME on port $APP_PORT..."
 
 mkdir -p "apps/$APP_NAME/handlers"
 
-# Copy shopping-list as template
-cp -r apps/shopping-list/. "apps/$APP_NAME/"
+# Copy todo-list as template
+cp -r apps/todo-list/. "apps/$APP_NAME/"
 
 # Replace names
-find "apps/$APP_NAME" -type f -exec sed -i "s/shopping-list/$APP_NAME/g" {} \;
+find "apps/$APP_NAME" -type f -exec sed -i "s/todo-list/$APP_NAME/g" {} \;
 sed -i "s/3001/$APP_PORT/g" "apps/$APP_NAME/main.go"
 sed -i "s/Shopping List/${APP_NAME^}/g" "apps/$APP_NAME/handlers/handler.go"
 
@@ -621,7 +621,7 @@ Visit http://localhost:3002 - another app running!
 
 ### Docker Setup
 
-`apps/shopping-list/Dockerfile`:
+`apps/todo-list/Dockerfile`:
 ```dockerfile
 FROM golang:1.21-alpine AS builder
 WORKDIR /app
@@ -647,15 +647,15 @@ CMD ["./main"]
 version: '3.8'
 
 services:
-  shopping-list:
+    todo-list:
     build:
-      context: ../apps/shopping-list
-    container_name: shopping-list
+            context: ../apps/todo-list
+        container_name: todo-list
     environment:
       - PORT=3001
       - JWT_SECRET=${JWT_SECRET}
     volumes:
-      - ../apps/shopping-list/data:/root/data
+            - ../apps/todo-list/data:/root/data
     restart: unless-stopped
     networks:
       - apps
@@ -668,7 +668,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - shopping-list
+            - todo-list
     restart: unless-stopped
     networks:
       - apps
@@ -689,9 +689,9 @@ http {
     server {
         listen 80;
 
-        location /shopping {
-            rewrite ^/shopping/(.*)$ /$1 break;
-            proxy_pass http://shopping-list:3001;
+        location /todo {
+            rewrite ^/todo/(.*)$ /$1 break;
+            proxy_pass http://todo-list:3001;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
         }
@@ -710,7 +710,7 @@ cd deploy
 JWT_SECRET=mysecret docker-compose up --build
 ```
 
-Visit http://localhost/shopping
+Visit http://localhost/todo
 
 ### Deploy to Digital Ocean
 
@@ -752,7 +752,7 @@ echo "✓ Deployed!"
 ### Enhance with LLM
 
 Ask Claude/GPT:
-> "In apps/notes, add rich text editing with Tiptap. Reference shopping-list for the handler structure."
+> "In apps/notes, add rich text editing with Tiptap. Reference todo-list for the handler structure."
 
 ### Monitoring
 

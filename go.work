@@ -5,5 +5,5 @@ use (
 	./shared/database
 	./shared/templates
 	./shared/models
-	./apps/shopping-list
+	./apps/todo-list
 )

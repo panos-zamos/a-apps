@@ -22,7 +22,7 @@
       "step_id": 2,
       "type": "research",
       "actor": "agent",
-      "summary": "Checked where /custom.css is referenced and how it was being served (apps/shopping-list/main.go, shared/templates/base.go, templates/app-template/main.go.tmpl).",
+      "summary": "Checked where /custom.css is referenced and how it was being served (apps/todo-list/main.go, shared/templates/base.go, templates/app-template/main.go.tmpl).",
       "timestamp": "2026-02-23T20:27:10Z"
     },
     {
@@ -36,21 +36,21 @@
       "step_id": 4,
       "type": "artifact",
       "actor": "agent",
-      "summary": "Relocated files and implemented embedded CSS handler; updated shopping-list and app-template to serve /custom.css via sharedTemplates.CustomCSSHandler (shared/templates/custom.css, shared/templates/custom_css.go, apps/shopping-list/main.go, templates/app-template/main.go.tmpl, docs/design-spec.md).",
+      "summary": "Relocated files and implemented embedded CSS handler; updated todo-list and app-template to serve /custom.css via sharedTemplates.CustomCSSHandler (shared/templates/custom.css, shared/templates/custom_css.go, apps/todo-list/main.go, templates/app-template/main.go.tmpl, docs/design-spec.md).",
       "timestamp": "2026-02-23T20:32:30Z"
     },
     {
       "step_id": 5,
       "type": "test",
       "actor": "agent",
-      "summary": "Ran go test ./apps/shopping-list/... and go test ./shared/templates/... (pass).",
+      "summary": "Ran go test ./apps/todo-list/... and go test ./shared/templates/... (pass).",
       "timestamp": "2026-02-23T20:33:30Z"
     }
   ],
   "evaluations": {
     "tests_run": true,
     "lint_passed": false,
-    "notes": "go test ./apps/shopping-list/...; go test ./shared/templates/..."
+    "notes": "go test ./apps/todo-list/...; go test ./shared/templates/..."
   },
   "final_summary": "Moved the shared stylesheet into shared/templates and embedded it so /custom.css is always served correctly, and relocated the design spec to docs/ with no runtime dependencies."
 }

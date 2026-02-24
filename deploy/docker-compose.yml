@@ -11,30 +11,30 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./ssl:/etc/nginx/ssl:ro  # For HTTPS certificates
     depends_on:
-      - shopping-list
+      - todo-list
     restart: unless-stopped
     networks:
       - a-apps-network
 
-  # Example app - will be added by scaffold script
-  # shopping-list:
-  #   build:
-  #     context: ../apps/shopping-list
-  #     dockerfile: Dockerfile
-  #   container_name: a-apps-shopping-list
-  #   environment:
-  #     - PORT=3001
-  #     - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
-  #   volumes:
-  #     - ../apps/shopping-list/data:/root/data
-  #   restart: unless-stopped
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   networks:
-  #     - a-apps-network
+  # Example app
+  todo-list:
+    build:
+      context: ../apps/todo-list
+      dockerfile: Dockerfile
+    container_name: a-apps-todo-list
+    environment:
+      - PORT=3001
+      - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
+    volumes:
+      - ../apps/todo-list/data:/root/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - a-apps-network
 
 networks:
   a-apps-network:

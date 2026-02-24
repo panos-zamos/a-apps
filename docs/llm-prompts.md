@@ -25,7 +25,7 @@ Use this prompt template:
 ```
 I have a Go + HTMX app in apps/my-new-app/ that needs to become a [DESCRIPTION].
 
-Reference: apps/shopping-list/ shows a complete example with:
+Reference: apps/todo-list/ shows a complete example with:
 - Stores and Items (1-to-many relationship)
 - CRUD operations with HTMX
 - SQLite database with migrations
@@ -50,7 +50,7 @@ Add a feature to [FEATURE NAME]:
 - Handler: [HTMX endpoint description]
 - UI: [user interaction]
 
-Use the same HTMX patterns from shopping-list (hx-post, hx-delete, hx-target).
+Use the same HTMX patterns from todo-list (hx-post, hx-delete, hx-target).
 ```
 
 ## Example Prompts
@@ -60,7 +60,7 @@ Use the same HTMX patterns from shopping-list (hx-post, hx-delete, hx-target).
 ```
 Create an expense tracking app in apps/expense-tracker/ (port 3002).
 
-Reference apps/shopping-list/ for structure.
+Reference apps/todo-list/ for structure.
 
 Requirements:
 - Track expenses with: date, amount, category, description
@@ -87,7 +87,7 @@ Use the same auth patterns and SQLite helpers from shared packages.
 ```
 Create a hobby project tracker in apps/project-tracker/ (port 3003).
 
-Reference apps/shopping-list/ for HTMX patterns and auth.
+Reference apps/todo-list/ for HTMX patterns and auth.
 
 Requirements:
 - Projects with name, description, status (Not Started, In Progress, Completed, Paused)
@@ -99,13 +99,13 @@ Database:
 - projects table: id, name, description, status, color, username
 - tasks table: id, project_id, name, completed, created_at, username
 
-UI: Grid of project cards similar to shopping-list stores
+UI: Grid of project cards similar to todo-list stores
 ```
 
 ### Adding a Feature
 
 ```
-Add export functionality to shopping-list:
+Add export functionality to todo-list:
 
 1. Add a "Export" button to each store
 2. When clicked, download a text file with:
@@ -121,7 +121,7 @@ Add export functionality to shopping-list:
 ### Fixing a Bug
 
 ```
-In shopping-list, when I add an item, it appears at the bottom instead of top.
+In todo-list, when I add an item, it appears at the bottom instead of top.
 
 The issue is in handlers/items.go, CreateItem function.
 The SQL query sorts by created_at DESC but HTMX uses hx-swap="beforeend".
@@ -133,7 +133,7 @@ Fix: Change hx-swap="beforeend" to hx-swap="afterbegin" in the form.
 
 ### DO:
 
-✅ **Reference existing code** - "Use the same pattern as shopping-list"
+✅ **Reference existing code** - "Use the same pattern as todo-list"
 ✅ **Be specific** - "Create a handler at POST /items that returns HTML"
 ✅ **Mention constraints** - "Use only Go standard library for this"
 ✅ **Request tests** - "Add a test for the toggle function"
@@ -151,7 +151,7 @@ Fix: Change hx-swap="beforeend" to hx-swap="afterbegin" in the form.
 ### Add a new database table
 
 ```
-Add a "tags" feature to shopping-list:
+Add a "tags" feature to todo-list:
 
 1. Migration in handlers/migrations.go:
    CREATE TABLE tags (id INTEGER PRIMARY KEY, name TEXT, color TEXT, username TEXT)
@@ -181,7 +181,7 @@ This will require login before accessing export.
 ### Style improvements
 
 ```
-Improve the shopping list UI:
+Improve the todo list UI:
 
 1. Add hover effects to item rows
 2. Use different colors for checked items (gray them out)
@@ -196,7 +196,7 @@ Use Tailwind CSS classes. Reference the current classes in handlers/handler.go.
 When you encounter errors:
 
 ```
-I'm getting this error when building shopping-list:
+I'm getting this error when building todo-list:
 [PASTE ERROR]
 
 The error is in [FILE:LINE]. Here's the relevant code:
@@ -227,7 +227,7 @@ I want to create 3 apps with similar structure:
 
 For each:
 - Use the scaffold script to create base app
-- Reference shopping-list for HTMX patterns
+- Reference todo-list for HTMX patterns
 - Keep it simple (no search initially, just list/create/delete)
 - Use similar color scheme and layout
 
@@ -248,7 +248,7 @@ Start with Books Tracker. Once that works, we'll do the others.
 # 1. Create new app
 ./scripts/new-app.sh recipe-manager 3006
 
-# 2. Describe to LLM (paste shopping-list code as reference)
+# 2. Describe to LLM (paste todo-list code as reference)
 # 3. LLM provides schema and handlers
 # 4. Copy code to files
 
@@ -267,9 +267,9 @@ git commit -m "Add recipe manager app"
 
 Point LLMs to these patterns when needed:
 
-- **CRUD with HTMX**: `apps/shopping-list/handlers/items.go`
+- **CRUD with HTMX**: `apps/todo-list/handlers/items.go`
 - **Authentication**: `shared/auth/middleware.go`
-- **Database migrations**: `apps/shopping-list/handlers/migrations.go`
+- **Database migrations**: `apps/todo-list/handlers/migrations.go`
 - **Login flow**: `shared/auth/auth.go` and handlers
 - **Base HTML layout**: `shared/templates/base.go`
 - **Dockerfile**: `templates/app-template/Dockerfile.tmpl`
@@ -278,7 +278,7 @@ Point LLMs to these patterns when needed:
 
 ### LLM suggests complex solution
 
-Response: "Keep it simple. Use the same pattern as shopping-list which just returns HTML."
+Response: "Keep it simple. Use the same pattern as todo-list which just returns HTML."
 
 ### LLM uses different framework
 

@@ -1,4 +1,4 @@
-# shopping-list
+# todo-list
 
 A personal web application built with Go + HTMX.
 
@@ -25,18 +25,18 @@ users:
 
 ```bash
 # Build binary
-go build -o shopping-list .
+go build -o todo-list .
 
 # Run
-./shopping-list
+./todo-list
 ```
 
 ## Docker
 
 ```bash
 # Build image
-docker build -t shopping-list .
+docker build -t todo-list .
 
 # Run container
-docker run -p 3001:3001 -v $(pwd)/data:/root/data shopping-list
+docker run -p 3001:3001 -v $(pwd)/data:/root/data todo-list
 ```

@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 # Check arguments
 if [ "$#" -ne 2 ]; then
     echo -e "${RED}Usage: $0 <app-name> <port>${NC}"
-    echo -e "${YELLOW}Example: $0 shopping-list 3001${NC}"
+    echo -e "${YELLOW}Example: $0 todo-list 3001${NC}"
     exit 1
 fi
 

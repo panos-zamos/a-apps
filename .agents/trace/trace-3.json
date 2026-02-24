@@ -2,7 +2,7 @@
   "trace_version": "1.0",
   "task": {
     "id": null,
-    "title": "Apply updated design spec and custom.css to shopping-list UI",
+    "title": "Apply updated design spec and custom.css to todo-list UI",
     "author": "user",
     "started_at": "2026-02-23T20:01:00Z",
     "ended_at": "2026-02-23T20:24:10Z"
@@ -15,14 +15,14 @@
       "step_id": 1,
       "type": "prompt",
       "actor": "human",
-      "summary": "Requirement: apply the restored custom.css and updated design-spec.md to the shopping-list app UI.",
+      "summary": "Requirement: apply the restored custom.css and updated design-spec.md to the todo-list app UI.",
       "timestamp": "2026-02-23T20:01:00Z"
     },
     {
       "step_id": 2,
       "type": "research",
       "actor": "agent",
-      "summary": "Reviewed custom.css/design-spec.md and inspected shopping-list HTML output (handlers/handler.go, handlers/items.go) plus shared templates (shared/templates/base.go).",
+      "summary": "Reviewed custom.css/design-spec.md and inspected todo-list HTML output (handlers/handler.go, handlers/items.go) plus shared templates (shared/templates/base.go).",
       "timestamp": "2026-02-23T20:03:00Z"
     },
     {
@@ -36,21 +36,21 @@
       "step_id": 4,
       "type": "artifact",
       "actor": "agent",
-      "summary": "Updated shared base/login templates and all shopping-list HTML fragments to match the new layout, spacing, and component rules (shared/templates/base.go, apps/shopping-list/handlers/handler.go, apps/shopping-list/handlers/items.go).",
+      "summary": "Updated shared base/login templates and all todo-list HTML fragments to match the new layout, spacing, and component rules (shared/templates/base.go, apps/todo-list/handlers/handler.go, apps/todo-list/handlers/items.go).",
       "timestamp": "2026-02-23T20:12:30Z"
     },
     {
       "step_id": 5,
       "type": "decision",
       "actor": "agent",
-      "summary": "Serve custom.css from the shopping-list app so the new layout styles load when running the app directly.",
+      "summary": "Serve custom.css from the todo-list app so the new layout styles load when running the app directly.",
       "timestamp": "2026-02-23T20:18:20Z"
     },
     {
       "step_id": 6,
       "type": "artifact",
       "actor": "agent",
-      "summary": "Added a /custom.css route to serve the root stylesheet from the app (apps/shopping-list/main.go).",
+      "summary": "Added a /custom.css route to serve the root stylesheet from the app (apps/todo-list/main.go).",
       "timestamp": "2026-02-23T20:19:00Z"
     },
     {
@@ -73,5 +73,5 @@
     "lint_passed": false,
     "notes": "No automated tests were run for UI markup updates."
   },
-  "final_summary": "Aligned shopping-list markup and shared templates with the updated design spec by replacing Tailwind classes and inline styles with the custom.css layout and utility classes, served the stylesheet from the app, and updated the app template to match the new design contract."
+  "final_summary": "Aligned todo-list markup and shared templates with the updated design spec by replacing Tailwind classes and inline styles with the custom.css layout and utility classes, served the stylesheet from the app, and updated the app template to match the new design contract."
 }

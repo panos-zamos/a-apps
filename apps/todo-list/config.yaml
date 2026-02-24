@@ -1,6 +1,6 @@
-app_name: "shopping-list"
+app_name: "todo-list"
 port: 3001
-database_url: "data/shopping-list.db"
+database_url: "data/todo-list.db"
 
 # Users who can access this application
 # Generate password hashes with: ./scripts/hash-password.sh yourpassword

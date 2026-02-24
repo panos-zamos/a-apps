@@ -22,7 +22,7 @@
     {
       "task": {
         "id": null,
-        "title": "Apply updated design spec and custom.css to shopping-list UI"
+        "title": "Apply updated design spec and custom.css to todo-list UI"
       },
       "started_at": "2026-02-23T20:01:00Z",
       "ended_at": "2026-02-23T20:13:30Z",

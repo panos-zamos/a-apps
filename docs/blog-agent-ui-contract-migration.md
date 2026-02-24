@@ -12,7 +12,7 @@ This repository uses a small UI contract (`docs/design-spec.md`) that enforces:
 - **only** classes defined in `custom.css`
 - minimal components: `.app`, `.sidebar`, `.content`, `.content-inner`, `.panel`, buttons, form controls, and a small allowed utility set
 
-The `shopping-list` app previously relied heavily on Tailwind utility classes embedded directly in HTML strings.
+The `todo-list` app previously relied heavily on Tailwind utility classes embedded directly in HTML strings.
 
 ## What changed
 
@@ -30,11 +30,11 @@ Changes:
 
 Result: all apps that use `sharedTemplates.BaseHTML` / `sharedTemplates.LoginHTML` now render with the contract layout by default.
 
-### 2) Shopping-list markup was rewritten to use only allowed classes
+### 2) Todo-list markup was rewritten to use only allowed classes
 
 Files updated:
-- `apps/shopping-list/handlers/handler.go`
-- `apps/shopping-list/handlers/items.go`
+- `apps/todo-list/handlers/handler.go`
+- `apps/todo-list/handlers/items.go`
 
 Changes:
 - Replaced Tailwind class soup (e.g. `flex`, `grid`, `text-gray-*`, `shadow`, etc.) with the allowed class set:
@@ -60,7 +60,7 @@ This uses `go:embed` to package the CSS into the binary and serves it with the p
 ### 4) Apps now serve `/custom.css` from the binary
 
 Files updated:
-- `apps/shopping-list/main.go`
+- `apps/todo-list/main.go`
 - `templates/app-template/main.go.tmpl`
 
 Change:
@@ -89,7 +89,7 @@ Changes:
 
 ## How to verify
 
-From `apps/shopping-list`:
+From `apps/todo-list`:
 
 - Start the server:
   - `go run .`
@@ -103,7 +103,7 @@ From `apps/shopping-list`:
 
 Tests run during the change:
 
-- `go test ./apps/shopping-list/...`
+- `go test ./apps/todo-list/...`
 - `go test ./shared/templates/...`
 
 ## Notes / follow-ups
