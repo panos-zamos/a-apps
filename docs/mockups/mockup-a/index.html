@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — Mockup A</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <h1>Projects</h1>
+    <a href="new-project.html" class="btn-add" aria-label="New project">+</a>
+  </header>
+
+  <!-- Filters -->
+  <section class="filters">
+    <select aria-label="Stage">
+      <option value="">All stages</option>
+      <option>Idea</option>
+      <option>Planning</option>
+      <option selected>Development</option>
+      <option>Released</option>
+      <option>Archived</option>
+    </select>
+    <select aria-label="Type">
+      <option value="">All types</option>
+      <option>Commercial</option>
+      <option>Open source</option>
+      <option>Public</option>
+    </select>
+    <select aria-label="Rating">
+      <option value="">Any rating</option>
+      <option>★★★★★</option>
+      <option>★★★★☆</option>
+      <option>★★★☆☆</option>
+      <option>★★☆☆☆</option>
+      <option>★☆☆☆☆</option>
+    </select>
+  </section>
+
+  <!-- Project cards -->
+  <main class="project-list">
+
+    <a href="detail.html" class="card">
+      <div class="card-header">
+        <span class="card-name">a-apps</span>
+        <span class="badge badge-dev">development</span>
+      </div>
+      <p class="card-desc">Personal app monorepo with Go and HTMX</p>
+      <div class="card-meta">
+        <span class="stars">★★★★☆</span>
+        <span class="tags">open-source · public</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="card">
+      <div class="card-header">
+        <span class="card-name">acme-crm</span>
+        <span class="badge badge-idea">idea</span>
+      </div>
+      <p class="card-desc">Client management system for small teams</p>
+      <div class="card-meta">
+        <span class="stars dim">—</span>
+        <span class="tags">commercial</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="card">
+      <div class="card-header">
+        <span class="card-name">budget-tracker</span>
+        <span class="badge badge-released">released</span>
+      </div>
+      <p class="card-desc">Simple personal finance tracking</p>
+      <div class="card-meta">
+        <span class="stars">★★★★★</span>
+        <span class="tags">open-source · public</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="card">
+      <div class="card-header">
+        <span class="card-name">recipe-box</span>
+        <span class="badge badge-planning">planning</span>
+      </div>
+      <p class="card-desc">Collect and organize recipes from the web</p>
+      <div class="card-meta">
+        <span class="stars">★★★☆☆</span>
+        <span class="tags">public</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="card">
+      <div class="card-header">
+        <span class="card-name">deploy-bot</span>
+        <span class="badge badge-archived">archived</span>
+      </div>
+      <p class="card-desc">Slack bot for one-click deployments</p>
+      <div class="card-meta">
+        <span class="stars">★★☆☆☆</span>
+        <span class="tags">commercial</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="card">
+      <div class="card-header">
+        <span class="card-name">ml-playground</span>
+        <span class="badge badge-dev">development</span>
+      </div>
+      <p class="card-desc">Experiments with small ML models</p>
+      <div class="card-meta">
+        <span class="stars">★★★★☆</span>
+        <span class="tags">open-source</span>
+      </div>
+    </a>
+
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-apps — Project Detail — Mockup A</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a href="index.html" class="back-link">← Projects</a>
+
+  <header class="detail-header">
+    <div class="card-header">
+      <h1>a-apps</h1>
+      <span class="badge badge-dev">development</span>
+    </div>
+    <p class="tagline">Personal app monorepo with Go and HTMX</p>
+  </header>
+
+  <section class="detail-meta">
+    <div class="meta-row">
+      <span class="meta-label">Rating</span>
+      <span class="stars">★★★★☆</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Website</span>
+      <span class="meta-value"><a href="#">apps.example.com</a></span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Source</span>
+      <span class="meta-value"><a href="#">github.com/user/a-apps</a></span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Flags</span>
+      <span class="tags">open-source · public</span>
+    </div>
+  </section>
+
+  <nav class="detail-actions">
+    <button class="btn btn-primary">Edit</button>
+    <button class="btn btn-danger">Delete</button>
+  </nav>
+
+  <section class="section">
+    <h2>Description</h2>
+    <p>
+      A monorepo of small, self-contained Go + HTMX applications. Each app
+      has its own SQLite database and is deployed behind an nginx reverse
+      proxy. Shared code for authentication, templates, and database access
+      lives in common modules. The goal is to have a single place for all
+      personal productivity tools with a consistent, minimal UI.
+    </p>
+  </section>
+
+  <div class="timeline-header">
+    <h2>Timeline</h2>
+    <button class="btn" style="padding: 4px 12px; font-size: 0.82rem;">+ Add Entry</button>
+  </div>
+
+  <section class="timeline">
+
+    <article class="log-entry">
+      <div class="log-date">2026-02-24</div>
+      <div class="log-note">Set up CI pipeline for automated deploys</div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+    <article class="log-entry nested">
+      <div class="log-date">2026-02-24</div>
+      <div class="log-note">Added GitHub Actions workflow config</div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+    <article class="log-entry nested">
+      <div class="log-date">2026-02-24</div>
+      <div class="log-note">Fixed lint step — was missing golangci-lint</div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+    <article class="log-entry">
+      <div class="log-date">2026-02-20</div>
+      <div class="log-note">Initial research on tech stack</div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+    <article class="log-entry nested">
+      <div class="log-date">2026-02-20</div>
+      <div class="log-note">Found useful HTMX patterns → <a href="#">htmx.org/examples</a></div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+    <article class="log-entry nested">
+      <div class="log-date">2026-02-20</div>
+      <div class="log-note">Evaluated chi vs gorilla/mux — chi is more idiomatic</div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+    <article class="log-entry">
+      <div class="log-date">2026-02-18</div>
+      <div class="log-note">Had the initial idea — want a single place for small tools</div>
+      <div class="log-actions">
+        <button>Reply</button>
+        <button>Delete</button>
+      </div>
+    </article>
+
+  </section>
+
+</body>
+</html>

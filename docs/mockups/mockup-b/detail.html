@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-apps — Project Detail — Mockup B</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a href="index.html" class="back">← back</a>
+
+  <header>
+    <div class="detail-title">
+      <h1>a-apps</h1>
+      <span class="stage stage-dev">dev</span>
+    </div>
+    <p class="tagline">Personal app monorepo with Go and HTMX</p>
+  </header>
+
+  <table class="meta-table">
+    <tr>
+      <td>rating</td>
+      <td><span class="rating">★★★★☆</span></td>
+    </tr>
+    <tr>
+      <td>website</td>
+      <td><a href="#">apps.example.com</a></td>
+    </tr>
+    <tr>
+      <td>source</td>
+      <td><a href="#">github.com/user/a-apps</a></td>
+    </tr>
+    <tr>
+      <td>flags</td>
+      <td>open-source · public</td>
+    </tr>
+    <tr>
+      <td>created</td>
+      <td>2026-02-18</td>
+    </tr>
+  </table>
+
+  <nav class="actions">
+    <button class="btn btn-dark">Edit</button>
+    <button class="btn btn-danger">Delete</button>
+  </nav>
+
+  <div class="section-label">Description</div>
+  <p class="description-text">
+    A monorepo of small, self-contained Go + HTMX applications. Each app
+    has its own SQLite database and is deployed behind an nginx reverse
+    proxy. Shared code for authentication, templates, and database access
+    lives in common modules. The goal is to have a single place for all
+    personal productivity tools with a consistent, minimal UI.
+  </p>
+
+  <div class="timeline-head">
+    <div class="section-label" style="margin-bottom: 0; border-bottom: none; padding-bottom: 0;">Timeline</div>
+    <button class="btn" style="font-size: 0.78rem; padding: 3px 10px;">+ add</button>
+  </div>
+
+  <section class="timeline">
+
+    <article class="entry">
+      <div class="entry-date">2026-02-24</div>
+      <div class="entry-text">Set up CI pipeline for automated deploys</div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+    <article class="entry nested">
+      <div class="entry-date">2026-02-24</div>
+      <div class="entry-text">Added GitHub Actions workflow config</div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+    <article class="entry nested">
+      <div class="entry-date">2026-02-24</div>
+      <div class="entry-text">Fixed lint step — was missing golangci-lint</div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="entry-date">2026-02-20</div>
+      <div class="entry-text">Initial research on tech stack</div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+    <article class="entry nested">
+      <div class="entry-date">2026-02-20</div>
+      <div class="entry-text">Found useful HTMX patterns → <a href="#">htmx.org/examples</a></div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+    <article class="entry nested">
+      <div class="entry-date">2026-02-20</div>
+      <div class="entry-text">Evaluated chi vs gorilla/mux — chi is more idiomatic</div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="entry-date">2026-02-18</div>
+      <div class="entry-text">Had the initial idea — want a single place for small tools</div>
+      <div class="entry-actions">
+        <button>reply</button>
+        <button>delete</button>
+      </div>
+    </article>
+
+  </section>
+
+</body>
+</html>

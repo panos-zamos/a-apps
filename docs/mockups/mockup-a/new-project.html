@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Project — Mockup A</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a href="index.html" class="back-link">← Cancel</a>
+
+  <div class="form-page">
+    <h1>New Project</h1>
+
+    <form>
+      <div class="field">
+        <label for="short_name">Short name</label>
+        <input type="text" id="short_name" name="short_name" placeholder="e.g. my-project" required>
+      </div>
+
+      <div class="field">
+        <label for="short_description">Short description</label>
+        <input type="text" id="short_description" name="short_description" placeholder="~10 word tagline">
+      </div>
+
+      <div class="field">
+        <label for="full_description">Full description</label>
+        <textarea id="full_description" name="full_description" placeholder="Goals, scope, details…"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="stage">Stage</label>
+        <select id="stage" name="stage">
+          <option value="idea">Idea</option>
+          <option value="planning">Planning</option>
+          <option value="development">Development</option>
+          <option value="released">Released</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="website_url">Website URL</label>
+        <input type="url" id="website_url" name="website_url" placeholder="https://...">
+      </div>
+
+      <div class="field">
+        <label for="source_url">Source URL</label>
+        <input type="url" id="source_url" name="source_url" placeholder="https://github.com/...">
+      </div>
+
+      <div class="field">
+        <label for="rating">Rating</label>
+        <select id="rating" name="rating">
+          <option value="">Not rated</option>
+          <option value="1">★☆☆☆☆</option>
+          <option value="2">★★☆☆☆</option>
+          <option value="3">★★★☆☆</option>
+          <option value="4">★★★★☆</option>
+          <option value="5">★★★★★</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="checkbox-row">
+          <label><input type="checkbox" name="is_commercial"> Commercial</label>
+          <label><input type="checkbox" name="is_open_source"> Open source</label>
+          <label><input type="checkbox" name="is_public"> Public</label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Create Project</button>
+        <a href="index.html" class="btn">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

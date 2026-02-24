@@ -6,4 +6,5 @@ use (
 	./shared/templates
 	./shared/models
 	./apps/todo-list
+	./apps/projects
 )

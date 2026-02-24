@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — Mockup B</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <h1>projects</h1>
+  </header>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <button class="chip active">All</button>
+    <button class="chip">Idea</button>
+    <button class="chip">Planning</button>
+    <button class="chip">Dev</button>
+    <button class="chip">Released</button>
+    <button class="chip">Archived</button>
+  </div>
+
+  <main class="list">
+
+    <a href="detail.html" class="list-item">
+      <div class="list-item-top">
+        <span class="name">a-apps</span>
+        <span class="stage stage-dev">dev</span>
+      </div>
+      <p class="desc">Personal app monorepo with Go and HTMX</p>
+      <div class="list-item-bottom">
+        <span class="rating">★★★★☆</span>
+        <span class="flags">open-source · public</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="list-item">
+      <div class="list-item-top">
+        <span class="name">acme-crm</span>
+        <span class="stage stage-idea">idea</span>
+      </div>
+      <p class="desc">Client management system for small teams</p>
+      <div class="list-item-bottom">
+        <span class="rating empty">—</span>
+        <span class="flags">commercial</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="list-item">
+      <div class="list-item-top">
+        <span class="name">budget-tracker</span>
+        <span class="stage stage-released">released</span>
+      </div>
+      <p class="desc">Simple personal finance tracking</p>
+      <div class="list-item-bottom">
+        <span class="rating">★★★★★</span>
+        <span class="flags">open-source · public</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="list-item">
+      <div class="list-item-top">
+        <span class="name">recipe-box</span>
+        <span class="stage stage-planning">planning</span>
+      </div>
+      <p class="desc">Collect and organize recipes from the web</p>
+      <div class="list-item-bottom">
+        <span class="rating">★★★☆☆</span>
+        <span class="flags">public</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="list-item">
+      <div class="list-item-top">
+        <span class="name">deploy-bot</span>
+        <span class="stage stage-archived">archived</span>
+      </div>
+      <p class="desc">Slack bot for one-click deployments</p>
+      <div class="list-item-bottom">
+        <span class="rating">★★☆☆☆</span>
+        <span class="flags">commercial</span>
+      </div>
+    </a>
+
+    <a href="detail.html" class="list-item">
+      <div class="list-item-top">
+        <span class="name">ml-playground</span>
+        <span class="stage stage-dev">dev</span>
+      </div>
+      <p class="desc">Experiments with small ML models</p>
+      <div class="list-item-bottom">
+        <span class="rating">★★★★☆</span>
+        <span class="flags">open-source</span>
+      </div>
+    </a>
+
+  </main>
+
+  <a href="new-project.html" class="fab" aria-label="New project">+</a>
+
+</body>
+</html>

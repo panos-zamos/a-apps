@@ -1,0 +1,9 @@
+app_name: "projects"
+port: 3002
+database_url: "data/projects.db"
+
+# Users who can access this application
+# Generate password hashes with: ./scripts/hash-password.sh yourpassword
+users:
+  - username: panos
+    password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2"  # password: demo123
