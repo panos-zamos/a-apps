@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/panos/a-apps/shared/auth"
+	"github.com/panos-zamos/a-apps/shared/auth"
 )
 
 // CreateStore handles creating a new store

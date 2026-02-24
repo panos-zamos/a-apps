@@ -5,10 +5,10 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/panos/a-apps/shared/auth"
-	"github.com/panos/a-apps/shared/database"
-	"github.com/panos/a-apps/shared/models"
-	sharedTemplates "github.com/panos/a-apps/shared/templates"
+	"github.com/panos-zamos/a-apps/shared/auth"
+	"github.com/panos-zamos/a-apps/shared/database"
+	"github.com/panos-zamos/a-apps/shared/models"
+	sharedTemplates "github.com/panos-zamos/a-apps/shared/templates"
 )
 
 // Handler holds dependencies for HTTP handlers

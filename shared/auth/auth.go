@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/panos/a-apps/shared/models"
+	"github.com/panos-zamos/a-apps/shared/models"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/yaml.v3"
 )

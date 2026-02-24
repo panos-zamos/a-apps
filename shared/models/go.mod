@@ -1,3 +1,3 @@
-module github.com/panos/a-apps/shared/models
+module github.com/panos-zamos/a-apps/shared/models
 
 go 1.21

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/panos/a-apps/shared/auth"
-	"github.com/panos/a-apps/shared/database"
+	"github.com/panos-zamos/a-apps/shared/auth"
+	"github.com/panos-zamos/a-apps/shared/database"
 )
 
 func TestHomeRendersSavedItems(t *testing.T) {
