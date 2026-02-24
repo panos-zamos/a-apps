@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -162,123 +161,13 @@ func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
 
 func (h *Handler) homeContent(stores []Store) string {
 	content := `
-		<section class="mb-lg">
-			<div class="row space-between mb-md">
-				<h2>My Shopping Lists</h2>
-				<button 
-					class="primary"
-					hx-get="/stores/new" 
-					hx-target="#modal"
-				>
-					New Store
-				</button>
-			</div>
-
-			<div id="stores-container">
+		<div class="row space-between mb-md">
+			<h2>Shopping Lists</h2>
+			<button class="btn-add" hx-get="/stores/new" hx-target="#modal">+</button>
+		</div>
 	`
 
-	if len(stores) == 0 {
-		content += `
-				<div class="panel center">
-					<p class="muted">No stores yet. Create your first shopping list!</p>
-				</div>
-		`
-	}
-
-	for _, store := range stores {
-		uncheckedCount := 0
-		for _, item := range store.Items {
-			if !item.Checked {
-				uncheckedCount++
-			}
-		}
-
-		content += fmt.Sprintf(`
-				<article class="panel mb-md">
-					<div class="row space-between mb-sm">
-						<h3>%s</h3>
-						<button 
-							hx-delete="/stores/%d" 
-							hx-confirm="Delete this store and all items?"
-							hx-target="#stores-container"
-							hx-swap="outerHTML"
-						>
-							Delete
-						</button>
-					</div>
-					
-					<p class="muted">%d items to buy</p>
-
-					<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
-						<label>Item</label>
-						<input 
-							type="text" 
-							name="name" 
-							placeholder="Add item..." 
-							required
-						/>
-						<div class="mt-sm">
-							<label>Quantity</label>
-							<input 
-								type="text" 
-								name="quantity" 
-								placeholder="Qty" 
-							/>
-						</div>
-						<div class="mt-md">
-							<button type="submit" class="primary">Add Item</button>
-						</div>
-					</form>
-
-					<div id="store-%d-items" class="mt-md">
-		`, store.Name, store.ID, uncheckedCount, store.ID, store.ID, store.ID)
-
-		for _, item := range store.Items {
-			checkedAttr := ""
-			itemName := item.Name
-			itemQuantity := item.Quantity
-			if item.Checked {
-				checkedAttr = "checked"
-				itemName = fmt.Sprintf("<del>%s</del>", item.Name)
-				itemQuantity = fmt.Sprintf("<del>%s</del>", item.Quantity)
-			}
-
-			content += fmt.Sprintf(`
-						<div class="row space-between mb-sm">
-							<div class="row">
-								<input 
-									type="checkbox" 
-									%s
-									hx-post="/items/%d/toggle"
-									hx-target="closest .space-between"
-									hx-swap="outerHTML"
-								/>
-								<span>%s</span>
-								<span class="muted">%s</span>
-							</div>
-							<button 
-								hx-delete="/items/%d"
-								hx-target="closest .space-between"
-								hx-swap="outerHTML"
-							>
-								Remove
-							</button>
-						</div>
-			`, checkedAttr, item.ID, itemName, itemQuantity, item.ID)
-		}
-
-		content += `
-					</div>
-				</article>
-		`
-	}
-
-	content += `
-			</div>
-		</section>
-
-		<div id="modal" class="mt-lg"></div>
-	`
-
+	content += h.storesGrid(stores)
+	content += `<div id="modal" class="mt-lg"></div>`
 	return content
 }

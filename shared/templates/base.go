@@ -12,30 +12,16 @@ const BaseHTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="app">
-        <aside class="sidebar">
-            <nav>
-                <div class="mb-md">
-                    <div class="muted">Application</div>
-                    <div>{{.AppName}}</div>
-                </div>
-                <div class="mb-md">
-                    <a href="/">Home</a>
-                </div>
-                {{if .Username}}
-                <div class="mb-sm muted">Signed in as {{.Username}}</div>
-                <form action="/logout" method="POST">
-                    <button type="submit">Logout</button>
-                </form>
-                {{end}}
-            </nav>
-        </aside>
+        <header class="top-bar">
+            <h1>{{.AppName}}</h1>
+            {{if .Username}}
+            <form action="/logout" method="POST">
+                <button type="submit">Logout</button>
+            </form>
+            {{end}}
+        </header>
         <main class="content">
-            <div class="content-inner">
-                <header class="mb-lg">
-                    <h1>{{.Title}}</h1>
-                </header>
-                {{.Content}}
-            </div>
+            {{.Content}}
         </main>
     </div>
 </body>
@@ -52,38 +38,29 @@ const LoginHTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="app">
-        <aside class="sidebar">
-            <nav>
-                <div class="mb-md">
-                    <div class="muted">Application</div>
-                    <div>{{.AppName}}</div>
-                </div>
-            </nav>
-        </aside>
+        <header class="top-bar">
+            <h1>{{.AppName}}</h1>
+        </header>
         <main class="content">
-            <div class="content-inner">
-                <header class="mb-lg">
-                    <h1>Sign in</h1>
-                    <p class="muted">Use your account to continue.</p>
-                </header>
-                {{if .Error}}
-                <div class="panel mb-md">
-                    <p>{{.Error}}</p>
-                </div>
-                {{end}}
-                <div class="panel">
-                    <form action="/login" method="POST">
-                        <label for="username">Username</label>
-                        <input id="username" name="username" type="text" required>
-                        <div class="mt-md">
-                            <label for="password">Password</label>
-                            <input id="password" name="password" type="password" required>
-                        </div>
-                        <div class="mt-md">
-                            <button type="submit" class="primary">Sign in</button>
-                        </div>
-                    </form>
-                </div>
+            <h2 class="mb-sm">Sign in</h2>
+            <p class="muted mb-md">Use your account to continue.</p>
+            {{if .Error}}
+            <div class="panel mb-md">
+                <p>{{.Error}}</p>
+            </div>
+            {{end}}
+            <div class="panel">
+                <form action="/login" method="POST">
+                    <label for="username">Username</label>
+                    <input id="username" name="username" type="text" required>
+                    <div class="mt-md">
+                        <label for="password">Password</label>
+                        <input id="password" name="password" type="password" required>
+                    </div>
+                    <div class="mt-md">
+                        <button type="submit" class="primary">Sign in</button>
+                    </div>
+                </form>
             </div>
         </main>
     </div>

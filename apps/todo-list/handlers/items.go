@@ -64,33 +64,14 @@ func (h *Handler) NewStoreForm(w http.ResponseWriter, r *http.Request) {
 			<h2>New Store</h2>
 			<form hx-post="/stores" hx-target="#modal" class="mt-md">
 				<label>Store Name</label>
-				<input 
-					type="text" 
-					name="name" 
-					required
-					placeholder="e.g., Supermarket, Pharmacy"
-				/>
+				<input type="text" name="name" required placeholder="e.g., Supermarket, Pharmacy">
 				<div class="mt-md">
 					<label>Color</label>
-					<input 
-						type="color" 
-						name="color" 
-						value="#3B82F6"
-					/>
+					<input type="color" name="color" value="#3B82F6">
 				</div>
 				<div class="row mt-md">
-					<button 
-						type="submit" 
-						class="primary"
-					>
-						Create
-					</button>
-					<button 
-						type="button"
-						onclick="this.closest('.panel').remove()"
-					>
-						Cancel
-					</button>
+					<button type="submit" class="primary">Create</button>
+					<button type="button" onclick="this.closest('.panel').remove()">Cancel</button>
 				</div>
 			</form>
 		</div>
@@ -126,22 +107,11 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 	html := fmt.Sprintf(`
 		<div class="row space-between mb-sm">
 			<div class="row">
-				<input 
-					type="checkbox"
-					hx-post="/items/%d/toggle"
-					hx-target="closest .space-between"
-					hx-swap="outerHTML"
-				/>
+				<input type="checkbox" hx-post="/items/%d/toggle" hx-target="closest .space-between" hx-swap="outerHTML">
 				<span>%s</span>
 				<span class="muted">%s</span>
 			</div>
-			<button 
-				hx-delete="/items/%d"
-				hx-target="closest .space-between"
-				hx-swap="outerHTML"
-			>
-				Remove
-			</button>
+			<button class="danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
 		</div>
 	`, itemID, name, quantity, itemID)
 
@@ -192,23 +162,11 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 	html := fmt.Sprintf(`
 		<div class="row space-between mb-sm">
 			<div class="row">
-				<input 
-					type="checkbox"
-					%s
-					hx-post="/items/%s/toggle"
-					hx-target="closest .space-between"
-					hx-swap="outerHTML"
-				/>
+				<input type="checkbox" %s hx-post="/items/%s/toggle" hx-target="closest .space-between" hx-swap="outerHTML">
 				<span>%s</span>
 				<span class="muted">%s</span>
 			</div>
-			<button 
-				hx-delete="/items/%s"
-				hx-target="closest .space-between"
-				hx-swap="outerHTML"
-			>
-				Remove
-			</button>
+			<button class="danger" hx-delete="/items/%s" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
 		</div>
 	`, checkedAttr, itemID, itemName, itemQuantity, itemID)
 
@@ -235,7 +193,7 @@ func (h *Handler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) storesGrid(stores []Store) string {
-	content := `<div id="stores-container">`
+	content := `<div id="stores-container" class="card-list">`
 
 	if len(stores) == 0 {
 		content += `
@@ -254,44 +212,16 @@ func (h *Handler) storesGrid(stores []Store) string {
 		}
 
 		content += fmt.Sprintf(`
-			<article class="panel mb-md">
+			<article class="card">
 				<div class="row space-between mb-sm">
-					<h3>%s</h3>
-					<button 
-						hx-delete="/stores/%d" 
-						hx-confirm="Delete this store and all items?"
-						hx-target="#stores-container"
-						hx-swap="outerHTML"
-					>
-						Delete
-					</button>
+					<span class="card-name">%s</span>
+					<button class="danger" hx-delete="/stores/%d" hx-confirm="Delete this store and all items?" hx-target="#stores-container" hx-swap="outerHTML">Delete</button>
 				</div>
-				
-				<p class="muted">%d items to buy</p>
 
-				<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
-					<label>Item</label>
-					<input 
-						type="text" 
-						name="name" 
-						placeholder="Add item..." 
-						required
-					/>
-					<div class="mt-sm">
-						<label>Quantity</label>
-						<input 
-							type="text" 
-							name="quantity" 
-							placeholder="Qty" 
-						/>
-					</div>
-					<div class="mt-md">
-						<button type="submit" class="primary">Add Item</button>
-					</div>
-				</form>
+				<p class="muted mb-sm">%d items to buy</p>
 
-				<div id="store-%d-items" class="mt-md">
-		`, store.Name, store.ID, uncheckedCount, store.ID, store.ID, store.ID)
+				<div id="store-%d-items">
+		`, store.Name, store.ID, uncheckedCount, store.ID)
 
 		for _, item := range store.Items {
 			checkedAttr := ""
@@ -306,31 +236,31 @@ func (h *Handler) storesGrid(stores []Store) string {
 			content += fmt.Sprintf(`
 				<div class="row space-between mb-sm">
 					<div class="row">
-						<input 
-							type="checkbox" 
-							%s
-							hx-post="/items/%d/toggle"
-							hx-target="closest .space-between"
-							hx-swap="outerHTML"
-						/>
+						<input type="checkbox" %s hx-post="/items/%d/toggle" hx-target="closest .space-between" hx-swap="outerHTML">
 						<span>%s</span>
 						<span class="muted">%s</span>
 					</div>
-					<button 
-						hx-delete="/items/%d"
-						hx-target="closest .space-between"
-						hx-swap="outerHTML"
-					>
-						Remove
-					</button>
+					<button class="danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
 				</div>
 			`, checkedAttr, item.ID, itemName, itemQuantity, item.ID)
 		}
 
-		content += `
+		content += fmt.Sprintf(`
 				</div>
+
+				<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
+					<label>Item</label>
+					<input type="text" name="name" placeholder="Add item..." required>
+					<div class="mt-sm">
+						<label>Quantity</label>
+						<input type="text" name="quantity" placeholder="Qty (optional)">
+					</div>
+					<div class="mt-sm">
+						<button type="submit" class="primary">Add Item</button>
+					</div>
+				</form>
 			</article>
-		`
+		`, store.ID, store.ID)
 	}
 
 	content += `</div>`

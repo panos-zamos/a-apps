@@ -87,9 +87,9 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 
 	projects, _ := h.getProjects(username, stageFilter, typeFilter, ratingFilter)
 
-	// Check if this is an HTMX request for just the table
+	// Check if this is an HTMX request for just the card list
 	if r.Header.Get("HX-Request") == "true" {
-		w.Write([]byte(h.projectsTable(projects)))
+		w.Write([]byte(h.projectCards(projects)))
 		return
 	}
 
@@ -379,7 +379,7 @@ func (h *Handler) ReplyForm(w http.ResponseWriter, r *http.Request) {
 	logID := chi.URLParam(r, "logId")
 
 	formHTML := fmt.Sprintf(`
-		<form hx-post="/projects/%s/log/%s/reply" hx-target="#timeline" hx-swap="innerHTML" class="mt-sm" style="margin-left:24px">
+		<form hx-post="/projects/%s/log/%s/reply" hx-target="#timeline" hx-swap="innerHTML" class="mt-sm">
 			<input type="text" name="note" placeholder="Add a reply..." required>
 			<div class="mt-sm">
 				<input type="text" name="url" placeholder="URL (optional)">
@@ -398,18 +398,17 @@ func (h *Handler) ReplyForm(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string, ratingFilter int) string {
 	content := `
-		<section class="mb-lg">
-			<div class="row space-between mb-md">
-				<h2>All Projects</h2>
-				<button class="primary" hx-get="/projects/new" hx-target="#modal">New Project</button>
-			</div>
+		<div class="row space-between mb-md">
+			<h2>All Projects</h2>
+			<button class="btn-add" hx-get="/projects/new" hx-target="#modal">+</button>
+		</div>
 	`
 
 	// Filters
-	content += `<div class="row mb-md">`
+	content += `<div class="filters mb-md">`
 
 	// Stage filter
-	content += `<select name="stage" hx-get="/" hx-target="#projects-table" hx-include="[name='type'],[name='rating']">`
+	content += `<select name="stage" hx-get="/" hx-target="#projects-list" hx-include="[name='type'],[name='rating']">`
 	content += `<option value="">All Stages</option>`
 	for _, s := range Stages {
 		sel := ""
@@ -421,7 +420,7 @@ func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string
 	content += `</select>`
 
 	// Type filter
-	content += `<select name="type" hx-get="/" hx-target="#projects-table" hx-include="[name='stage'],[name='rating']">`
+	content += `<select name="type" hx-get="/" hx-target="#projects-list" hx-include="[name='stage'],[name='rating']">`
 	content += `<option value="">All Types</option>`
 	types := []struct{ val, label string }{
 		{"commercial", "Commercial"},
@@ -438,7 +437,7 @@ func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string
 	content += `</select>`
 
 	// Rating filter
-	content += `<select name="rating" hx-get="/" hx-target="#projects-table" hx-include="[name='stage'],[name='type']">`
+	content += `<select name="rating" hx-get="/" hx-target="#projects-list" hx-include="[name='stage'],[name='type']">`
 	content += `<option value="">All Ratings</option>`
 	for i := 1; i <= 5; i++ {
 		sel := ""
@@ -451,70 +450,67 @@ func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string
 
 	content += `</div>`
 
-	// Projects table
-	content += `<div id="projects-table">`
-	content += h.projectsTable(projects)
+	// Project cards
+	content += `<div id="projects-list" class="card-list">`
+	content += h.projectCards(projects)
 	content += `</div>`
 
-	content += `</section><div id="modal" class="mt-lg"></div>`
+	content += `<div id="modal" class="mt-lg"></div>`
 	return content
 }
 
-func (h *Handler) projectsTable(projects []Project) string {
+func (h *Handler) projectCards(projects []Project) string {
 	if len(projects) == 0 {
 		return `<div class="panel center"><p class="muted">No projects yet. Create your first project!</p></div>`
 	}
 
-	content := `<table><thead><tr>
-		<th>Name</th><th>Description</th><th>Stage</th><th>Rating</th><th>Flags</th>
-	</tr></thead><tbody>`
-
+	content := ""
 	for _, p := range projects {
 		flags := projectFlags(p)
 		content += fmt.Sprintf(`
-			<tr onclick="window.location='/projects/%d'" role="link">
-				<td>%s</td>
-				<td><span class="muted">%s</span></td>
-				<td>%s</td>
-				<td>%s</td>
-				<td><span class="muted">%s</span></td>
-			</tr>`,
+			<a href="/projects/%d" class="card">
+				<div class="card-header">
+					<span class="card-name">%s</span>
+					<span class="badge %s">%s</span>
+				</div>
+				<p class="card-desc">%s</p>
+				<div class="card-meta">
+					<span class="stars">%s</span>
+					<span class="tags">%s</span>
+				</div>
+			</a>`,
 			p.ID,
 			html.EscapeString(p.ShortName),
+			badgeClass(p.Stage), p.Stage,
 			html.EscapeString(p.ShortDescription),
-			p.Stage,
 			ratingDisplay(p.Rating),
 			flags)
 	}
 
-	content += `</tbody></table>`
 	return content
 }
 
 func (h *Handler) detailContent(p *Project, logEntries []LogEntry) string {
-	content := fmt.Sprintf(`
-		<section class="mb-lg">
-			<div class="mb-md">
-				<a href="/">&larr; Back to projects</a>
-			</div>
+	content := `<a href="/" class="back-link">&larr; Projects</a>`
 
-			<div class="panel mb-md">
-				<div class="row space-between mb-sm">
-					<h2>%s</h2>
-					<div class="row">
-						<button hx-get="/projects/%d/edit" hx-target="#modal">Edit</button>
-						<button hx-delete="/projects/%d" hx-confirm="Delete this project and all log entries?">Delete</button>
-					</div>
-				</div>
+	// Title + badge
+	content += fmt.Sprintf(`
+		<div class="card-header mb-sm">
+			<h2>%s</h2>
+			<span class="badge %s">%s</span>
+		</div>`,
+		html.EscapeString(p.ShortName), badgeClass(p.Stage), p.Stage)
 
-				<p class="muted mb-sm">%s</p>
+	// Tagline
+	if p.ShortDescription != "" {
+		content += fmt.Sprintf(`<p class="muted mb-md">%s</p>`, html.EscapeString(p.ShortDescription))
+	}
 
-				<div class="row mb-sm">
-					<span>Stage:</span>
-					<select name="stage" hx-put="/projects/%d/stage" hx-swap="none">`,
-		html.EscapeString(p.ShortName), p.ID, p.ID,
-		html.EscapeString(p.ShortDescription), p.ID)
+	// Metadata
+	content += `<div class="detail-meta">`
 
+	// Stage dropdown
+	content += fmt.Sprintf(`<div class="meta-row"><span class="meta-label">Stage</span><select name="stage" hx-put="/projects/%d/stage" hx-swap="none">`, p.ID)
 	for _, s := range Stages {
 		sel := ""
 		if s == p.Stage {
@@ -522,60 +518,69 @@ func (h *Handler) detailContent(p *Project, logEntries []LogEntry) string {
 		}
 		content += fmt.Sprintf(`<option value="%s"%s>%s</option>`, s, sel, s)
 	}
+	content += `</select></div>`
 
-	content += fmt.Sprintf(`</select>
-					<span>Rating: %s</span>
-				</div>`, ratingDisplay(p.Rating))
+	// Rating
+	content += fmt.Sprintf(`<div class="meta-row"><span class="meta-label">Rating</span><span class="stars">%s</span></div>`, ratingDisplay(p.Rating))
 
-	// URLs
+	// Website
 	if p.WebsiteURL != "" {
-		content += fmt.Sprintf(`<div class="mb-sm"><span class="muted">Website:</span> <a href="%s" target="_blank">%s</a></div>`,
+		content += fmt.Sprintf(`<div class="meta-row"><span class="meta-label">Website</span><span class="meta-value"><a href="%s" target="_blank">%s</a></span></div>`,
 			html.EscapeString(p.WebsiteURL), html.EscapeString(p.WebsiteURL))
 	}
+
+	// Source
 	if p.SourceURL != "" {
-		content += fmt.Sprintf(`<div class="mb-sm"><span class="muted">Source:</span> <a href="%s" target="_blank">%s</a></div>`,
+		content += fmt.Sprintf(`<div class="meta-row"><span class="meta-label">Source</span><span class="meta-value"><a href="%s" target="_blank">%s</a></span></div>`,
 			html.EscapeString(p.SourceURL), html.EscapeString(p.SourceURL))
 	}
 
 	// Flags
 	flags := projectFlags(*p)
 	if flags != "" {
-		content += fmt.Sprintf(`<div class="mb-sm muted">%s</div>`, flags)
-	}
-
-	// Full description
-	if p.FullDescription != "" {
-		content += fmt.Sprintf(`<div class="mt-md"><p>%s</p></div>`, html.EscapeString(p.FullDescription))
+		content += fmt.Sprintf(`<div class="meta-row"><span class="meta-label">Flags</span><span class="tags">%s</span></div>`, flags)
 	}
 
 	content += `</div>`
 
+	// Action buttons
+	content += fmt.Sprintf(`
+		<div class="row mb-md">
+			<button class="primary" hx-get="/projects/%d/edit" hx-target="#modal">Edit</button>
+			<button class="danger" hx-delete="/projects/%d" hx-confirm="Delete this project and all log entries?">Delete</button>
+		</div>`, p.ID, p.ID)
+
+	// Full description
+	if p.FullDescription != "" {
+		content += fmt.Sprintf(`
+			<div class="section-title">Description</div>
+			<p class="mb-lg">%s</p>`, html.EscapeString(p.FullDescription))
+	}
+
 	// Timeline section
 	content += fmt.Sprintf(`
-		<div class="panel">
-			<div class="row space-between mb-md">
-				<h2>Timeline</h2>
-				<button class="primary" onclick="document.getElementById('new-entry-form').style.display='block'">Add Entry</button>
-			</div>
+		<div class="row space-between mb-md">
+			<div class="section-title">Timeline</div>
+			<button class="primary" onclick="document.getElementById('new-entry-form').style.display='block'">Add Entry</button>
+		</div>
 
-			<form id="new-entry-form" hx-post="/projects/%d/log" hx-target="#timeline" hx-swap="innerHTML" class="mb-md" hidden>
-				<input type="text" name="note" placeholder="What happened?" required>
-				<div class="mt-sm">
-					<input type="text" name="url" placeholder="URL (optional)">
-				</div>
-				<div class="row mt-sm">
-					<button type="submit" class="primary">Add</button>
-					<button type="button" onclick="this.closest('form').style.display='none'">Cancel</button>
-				</div>
-			</form>
-
-			<div id="timeline">
-				%s
+		<form id="new-entry-form" hx-post="/projects/%d/log" hx-target="#timeline" hx-swap="innerHTML" class="panel mb-md" hidden>
+			<input type="text" name="note" placeholder="What happened?" required>
+			<div class="mt-sm">
+				<input type="text" name="url" placeholder="URL (optional)">
 			</div>
+			<div class="row mt-sm">
+				<button type="submit" class="primary">Add</button>
+				<button type="button" onclick="this.closest('form').style.display='none'">Cancel</button>
+			</div>
+		</form>
+
+		<div id="timeline" class="timeline">
+			%s
 		</div>
 	`, p.ID, h.timelineHTML(logEntries, p.ID))
 
-	content += `</section><div id="modal" class="mt-lg"></div>`
+	content += `<div id="modal" class="mt-lg"></div>`
 	return content
 }
 
@@ -587,14 +592,17 @@ func (h *Handler) timelineHTML(entries []LogEntry, projectID int) string {
 	content := ""
 	for _, e := range entries {
 		content += h.logEntryHTML(e, projectID, false)
+		for _, child := range e.Children {
+			content += h.logEntryHTML(child, projectID, true)
+		}
 	}
 	return content
 }
 
 func (h *Handler) logEntryHTML(e LogEntry, projectID int, isChild bool) string {
-	indent := ""
+	nestedClass := ""
 	if isChild {
-		indent = ` style="margin-left:24px"`
+		nestedClass = " nested"
 	}
 
 	urlPart := ""
@@ -602,36 +610,26 @@ func (h *Handler) logEntryHTML(e LogEntry, projectID int, isChild bool) string {
 		urlPart = fmt.Sprintf(` &mdash; <a href="%s" target="_blank">link</a>`, html.EscapeString(e.URL))
 	}
 
-	// Format date - show just the date part
 	datePart := e.CreatedAt
 	if len(datePart) > 10 {
 		datePart = datePart[:10]
 	}
 
 	content := fmt.Sprintf(`
-		<div class="mb-sm"%s>
-			<div class="row space-between">
-				<div>
-					<span class="muted">%s</span>
-					%s%s
-				</div>
-				<div class="row">
-					<button hx-get="/projects/%d/log/%d/reply" hx-target="#reply-%d" hx-swap="innerHTML">Reply</button>
-					<button hx-delete="/projects/%d/log/%d" hx-target="#timeline" hx-swap="innerHTML" hx-confirm="Delete this entry?">Del</button>
-				</div>
+		<article class="log-entry%s">
+			<div class="log-date">%s</div>
+			<div class="log-note">%s%s</div>
+			<div class="log-actions">
+				<button hx-get="/projects/%d/log/%d/reply" hx-target="#reply-%d" hx-swap="innerHTML">Reply</button>
+				<button hx-delete="/projects/%d/log/%d" hx-target="#timeline" hx-swap="innerHTML" hx-confirm="Delete this entry?">Delete</button>
 			</div>
-			<div id="reply-%d"></div>`,
-		indent, datePart,
+			<div id="reply-%d"></div>
+		</article>`,
+		nestedClass, datePart,
 		html.EscapeString(e.Note), urlPart,
 		projectID, e.ID, e.ID,
 		projectID, e.ID, e.ID)
 
-	// Render children
-	for _, child := range e.Children {
-		content += h.logEntryHTML(child, projectID, true)
-	}
-
-	content += `</div>`
 	return content
 }
 
@@ -725,7 +723,7 @@ func (h *Handler) projectForm(p *Project) string {
 					<select name="rating">%s</select>
 				</div>
 
-				<div class="mt-md row">
+				<div class="mt-md checkbox-row">
 					<label><input type="checkbox" name="is_commercial"%s> Commercial</label>
 					<label><input type="checkbox" name="is_open_source"%s> Open Source</label>
 					<label><input type="checkbox" name="is_public"%s> Public</label>
@@ -743,6 +741,15 @@ func (h *Handler) projectForm(p *Project) string {
 
 // --- Helpers ---
 
+func badgeClass(stage string) string {
+	switch stage {
+	case "development":
+		return "badge-dev"
+	default:
+		return "badge-" + stage
+	}
+}
+
 func ratingStars(n int) string {
 	s := ""
 	for i := 0; i < n; i++ {
@@ -756,7 +763,7 @@ func ratingStars(n int) string {
 
 func ratingDisplay(n int) string {
 	if n == 0 {
-		return `<span class="muted">—</span>`
+		return "—"
 	}
 	return ratingStars(n)
 }
