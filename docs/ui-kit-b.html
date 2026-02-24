@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a-apps — UI Kit B &amp; Style Guide</title>
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      --bg: #ffffff;
+      --surface: #fafafa;
+      --border: #eaeaea;
+      --text: #111111;
+      --secondary: #666666;
+      --accent: #000000;
+      --accent-text: #ffffff;
+      --radius: 4px;
+      --radius-badge: 2px;
+
+      /* Bold accent pops — used sparingly */
+      --pop-blue: #2563eb;
+      --pop-red: #dc2626;
+      --pop-green: #16a34a;
+      --pop-amber: #d97706;
+      --pop-violet: #7c3aed;
+
+      /* Semantic */
+      --info-bg: #eff6ff;
+      --info-text: #2563eb;
+      --info-border: #bfdbfe;
+      --success-bg: #f0fdf4;
+      --success-text: #16a34a;
+      --success-border: #bbf7d0;
+      --warning-bg: #fffbeb;
+      --warning-text: #d97706;
+      --warning-border: #fde68a;
+      --danger-bg: #fef2f2;
+      --danger-text: #dc2626;
+      --danger-border: #fecaca;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+      font-size: 14px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== Guide layout ===== */
+    .guide {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 16px 80px;
+    }
+
+    .guide-header {
+      padding: 20px 0 12px;
+      border-bottom: 2px solid var(--text);
+      margin-bottom: 28px;
+    }
+    .guide-header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: lowercase;
+    }
+    .guide-header p { color: var(--secondary); font-size: 0.82rem; margin-top: 2px; }
+
+    .toc { margin-bottom: 32px; }
+    .toc h2 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.82rem;
+      display: block;
+      padding: 3px 0;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    section { margin-bottom: 40px; }
+    section > h2 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary);
+      font-weight: 600;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--pop-blue);
+      margin-bottom: 16px;
+    }
+    section > h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+      margin-top: 20px;
+    }
+    section > h3:first-of-type { margin-top: 0; }
+
+    .sample {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+
+    .code-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    pre {
+      background: #111111;
+      color: #e0e0e0;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+
+    code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 2px;
+      font-size: 0.85rem;
+      font-family: inherit;
+    }
+    pre code { background: none; border: none; padding: 0; }
+
+    .note {
+      font-size: 0.82rem;
+      color: var(--secondary);
+      margin-bottom: 12px;
+    }
+
+    /* ===== Color swatches ===== */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px;
+    }
+    .swatch {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .swatch-color { height: 48px; }
+    .swatch-info { background: var(--bg); padding: 6px 8px; }
+    .swatch-name { font-weight: 600; font-size: 0.75rem; }
+    .swatch-val { font-size: 0.68rem; color: var(--secondary); }
+
+    /* ===== Spacing demo ===== */
+    .spacing-demo { display: flex; flex-direction: column; gap: 4px; }
+    .spacing-row { display: flex; align-items: center; gap: 8px; }
+    .spacing-bar { background: var(--accent); height: 8px; }
+    .spacing-label { font-size: 0.75rem; color: var(--secondary); min-width: 50px; }
+    .spacing-val { font-size: 0.72rem; color: var(--secondary); }
+
+    /* ═══════════════════════════════════════════ */
+    /* Inline component styles (mockup-b derived) */
+    /* ═══════════════════════════════════════════ */
+
+    /* --- Header --- */
+    .header-demo {
+      padding: 14px 0;
+      border-bottom: 2px solid var(--text);
+    }
+    .header-demo h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: lowercase;
+    }
+
+    /* --- Filter chips --- */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      padding: 12px 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .chip {
+      flex-shrink: 0;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--secondary);
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .chip.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    /* --- List items --- */
+    .list { display: flex; flex-direction: column; }
+    .list-item {
+      display: block;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+    }
+    .list-item:active { background: var(--surface); }
+    .list-item-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2px; }
+    .item-name { font-weight: 600; font-size: 0.95rem; }
+    .item-desc { color: var(--secondary); font-size: 0.82rem; margin-bottom: 6px; }
+    .list-item-bottom { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; }
+
+    /* --- Rating (pip rings) --- */
+    .rating { display: inline-flex; gap: 3px; align-items: center; }
+    .pip {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1.5px solid var(--pop-blue);
+      background: transparent;
+    }
+    .pip.on {
+      background: radial-gradient(circle, var(--pop-blue) 35%, transparent 36%);
+    }
+    .rating.empty-rating { color: var(--secondary); font-size: 0.78rem; }
+
+    .flags { color: var(--secondary); }
+
+    /* --- Stage badges --- */
+    .stage {
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 1px 8px;
+      border-radius: var(--radius-badge);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: inline-block;
+    }
+    .stage-idea     { background: #f3f0ff; color: #7c3aed; }
+    .stage-planning { background: #eff6ff; color: #2563eb; }
+    .stage-dev      { background: #f0fdf4; color: #16a34a; }
+    .stage-released { background: #fffbeb; color: #d97706; }
+    .stage-archived { background: #f5f5f5; color: #999999; }
+
+    /* --- Buttons --- */
+    .btn {
+      padding: 6px 16px;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 0.82rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-dark {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+    .btn-danger { color: var(--pop-red); border-color: var(--danger-border); }
+    .btn-pop { background: var(--pop-blue); color: #fff; border-color: var(--pop-blue); }
+    .btn:disabled, .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+    .fab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--accent-text);
+      font-size: 1.25rem;
+      text-decoration: none;
+      line-height: 1;
+      border: 1px solid var(--accent);
+    }
+
+    /* --- Forms --- */
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 0.88rem;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--pop-blue);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+    .field textarea { min-height: 80px; resize: vertical; }
+    .field input[type="checkbox"],
+    .field input[type="radio"],
+    .field input[type="color"] { width: auto; padding: 0; }
+
+    .checkbox-row { display: flex; gap: 16px; align-items: center; }
+    .checkbox-row label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    /* --- Panels --- */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    /* --- Section labels --- */
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary);
+      font-weight: 600;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* --- Back link --- */
+    .back { font-size: 0.82rem; color: var(--secondary); text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+
+    /* --- Detail metadata --- */
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .meta-table td {
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .meta-table td:first-child {
+      color: var(--secondary);
+      width: 80px;
+      padding-right: 12px;
+    }
+    .meta-table tr:last-child td { border-bottom: none; }
+    .meta-table a {
+      color: var(--text);
+      text-decoration: underline;
+      text-decoration-color: var(--border);
+      text-underline-offset: 2px;
+    }
+
+    /* --- Timeline --- */
+    .timeline {
+      position: relative;
+      padding-left: 20px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .entry {
+      position: relative;
+      padding-bottom: 16px;
+    }
+    .entry::before {
+      content: "";
+      position: absolute;
+      left: -20px;
+      top: 6px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      border: 2px solid var(--bg);
+    }
+    /* Horizontal dashed connector: dot → content */
+    .entry::after {
+      content: "";
+      position: absolute;
+      left: -10px;
+      top: 9px;
+      width: 8px;
+      height: 0;
+      border-top: 1px dashed var(--border);
+    }
+
+    .entry.nested {
+      margin-left: 20px;
+    }
+    .entry.nested::before {
+      left: -40px;
+      background: transparent;
+      border: 1px solid var(--border);
+    }
+    .entry.nested::after {
+      left: -30px;
+      width: 28px;
+    }
+
+    .entry-date { font-size: 0.68rem; color: var(--secondary); }
+    .entry-text { font-size: 0.85rem; }
+    .entry-text a { color: var(--text); }
+    .entry-actions { margin-top: 3px; }
+    .entry-actions button {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.72rem;
+      color: var(--secondary);
+      cursor: pointer;
+      padding: 0;
+      margin-right: 10px;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+    }
+    .entry-actions button:hover { text-decoration-color: var(--secondary); }
+
+    /* --- Alerts --- */
+    .alert {
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      line-height: 1.55;
+      border-left: 3px solid;
+    }
+    .alert-info    { background: var(--info-bg);    color: var(--info-text);    border-left-color: var(--pop-blue); }
+    .alert-success { background: var(--success-bg); color: var(--success-text); border-left-color: var(--pop-green); }
+    .alert-warning { background: var(--warning-bg); color: var(--warning-text); border-left-color: var(--pop-amber); }
+    .alert-danger  { background: var(--danger-bg);  color: var(--danger-text);  border-left-color: var(--pop-red); }
+
+    /* --- Table --- */
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    table.data-table th {
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--secondary);
+      padding: 6px 10px;
+      border-bottom: 2px solid var(--pop-blue);
+    }
+    table.data-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    table.data-table tr:last-child td { border-bottom: none; }
+
+    /* --- Utilities --- */
+    .row { display: flex; gap: 8px; align-items: center; }
+    .space-between { justify-content: space-between; }
+    .mt-sm { margin-top: 8px;  } .mt-md { margin-top: 14px; } .mt-lg { margin-top: 24px; }
+    .mb-sm { margin-bottom: 8px; } .mb-md { margin-bottom: 14px; } .mb-lg { margin-bottom: 24px; }
+    .center { text-align: center; }
+    .muted { color: var(--secondary); font-size: 0.85rem; }
+
+    /* ===== Guide-only accent strip (tiny pop of color) ===== */
+    .pop-strip {
+      height: 3px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, var(--pop-violet), var(--pop-blue), var(--pop-green), var(--pop-amber), var(--pop-red));
+    }
+  </style>
+</head>
+<body>
+
+<div class="guide">
+
+  <!-- ===== Header ===== -->
+  <header class="guide-header">
+    <h1>a-apps ui kit — variant b</h1>
+    <p>monochrome · monospace · tight spacing · bold accents in small doses</p>
+  </header>
+
+  <div class="pop-strip"></div>
+
+  <!-- ===== Table of Contents ===== -->
+  <nav class="toc">
+    <h2>Contents</h2>
+    <a href="#colors">1. color palette</a>
+    <a href="#typography">2. typography</a>
+    <a href="#spacing">3. spacing &amp; radii</a>
+    <a href="#buttons">4. buttons</a>
+    <a href="#forms">5. forms</a>
+    <a href="#badges">6. stage badges</a>
+    <a href="#alerts">7. alerts</a>
+    <a href="#list-items">8. list items</a>
+    <a href="#panels">9. panels</a>
+    <a href="#tables">10. tables</a>
+    <a href="#timeline">11. timeline</a>
+    <a href="#detail-meta">12. detail metadata</a>
+    <a href="#filters">13. filter chips</a>
+    <a href="#layout">14. layout shell</a>
+    <a href="#utilities">15. utility classes</a>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 1. COLOR PALETTE                            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="colors">
+    <h2>1. Color Palette</h2>
+
+    <h3>Core</h3>
+    <div class="swatch-grid mb-md">
+      <div class="swatch"><div class="swatch-color" style="background:#ffffff"></div><div class="swatch-info"><div class="swatch-name">bg</div><div class="swatch-val">#ffffff</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fafafa"></div><div class="swatch-info"><div class="swatch-name">surface</div><div class="swatch-val">#fafafa</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#eaeaea"></div><div class="swatch-info"><div class="swatch-name">border</div><div class="swatch-val">#eaeaea</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#111111"></div><div class="swatch-info"><div class="swatch-name">text</div><div class="swatch-val">#111111</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#666666"></div><div class="swatch-info"><div class="swatch-name">secondary</div><div class="swatch-val">#666666</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#000000"></div><div class="swatch-info"><div class="swatch-name">accent</div><div class="swatch-val">#000000</div></div></div>
+    </div>
+
+    <h3>Bold Accents (small quantities)</h3>
+    <div class="swatch-grid mb-md">
+      <div class="swatch"><div class="swatch-color" style="background:#2563eb"></div><div class="swatch-info"><div class="swatch-name">pop-blue</div><div class="swatch-val">#2563eb</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#7c3aed"></div><div class="swatch-info"><div class="swatch-name">pop-violet</div><div class="swatch-val">#7c3aed</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#16a34a"></div><div class="swatch-info"><div class="swatch-name">pop-green</div><div class="swatch-val">#16a34a</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#d97706"></div><div class="swatch-info"><div class="swatch-name">pop-amber</div><div class="swatch-val">#d97706</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#dc2626"></div><div class="swatch-info"><div class="swatch-name">pop-red</div><div class="swatch-val">#dc2626</div></div></div>
+    </div>
+
+    <h3>Semantic Surfaces</h3>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#eff6ff"></div><div class="swatch-info"><div class="swatch-name">info</div><div class="swatch-val">#eff6ff</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#f0fdf4"></div><div class="swatch-info"><div class="swatch-name">success</div><div class="swatch-val">#f0fdf4</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fffbeb"></div><div class="swatch-info"><div class="swatch-name">warning</div><div class="swatch-val">#fffbeb</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#fef2f2"></div><div class="swatch-info"><div class="swatch-name">danger</div><div class="swatch-val">#fef2f2</div></div></div>
+    </div>
+
+    <p class="code-label mt-md">CSS Variables</p>
+    <pre><code>:root {
+  --bg: #ffffff;
+  --surface: #fafafa;
+  --border: #eaeaea;
+  --text: #111111;
+  --secondary: #666666;
+  --accent: #000000;
+  --accent-text: #ffffff;
+  --radius: 4px;
+  --radius-badge: 2px;
+
+  --pop-blue: #2563eb;
+  --pop-red: #dc2626;
+  --pop-green: #16a34a;
+  --pop-amber: #d97706;
+  --pop-violet: #7c3aed;
+}</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 2. TYPOGRAPHY                               -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="typography">
+    <h2>2. Typography</h2>
+
+    <p class="note">Font stack: <code>"SF Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace</code><br>Base: 14px · Line height: 1.55</p>
+
+    <div class="sample">
+      <h1 style="font-size:1.3rem;font-weight:700;letter-spacing:0.02em;margin-bottom:10px">Heading 1 — page title</h1>
+      <h2 style="font-size:1.1rem;font-weight:700;letter-spacing:0.04em;text-transform:lowercase;margin-bottom:8px">heading 2 — section title</h2>
+      <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px">Heading 3 — subsection</h3>
+      <h4 style="font-size:0.88rem;font-weight:600;margin-bottom:6px">Heading 4 — group label</h4>
+      <h5 style="font-size:0.82rem;font-weight:600;margin-bottom:6px">Heading 5 — minor heading</h5>
+      <h6 style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#666666;margin-bottom:6px">Heading 6 — section label</h6>
+      <p style="margin-bottom:6px">body text at 14px monospace. the tight spacing and technical feel of a monospace font gives the interface a focused, tool-like personality.</p>
+      <p style="color:#666666;font-size:0.85rem;margin-bottom:6px">secondary text — use <code>.muted</code> for metadata and supporting content.</p>
+      <p style="font-size:0.78rem">small text at 0.78rem for dates, fine print, and tertiary labels.</p>
+    </div>
+
+    <p class="code-label">Scale</p>
+    <pre><code>h1  →  1.30rem  weight: 700  tracking: 0.02em
+h2  →  1.10rem  weight: 700  tracking: 0.04em  lowercase
+h3  →  0.95rem  weight: 600
+h4  →  0.88rem  weight: 600
+h5  →  0.82rem  weight: 600
+h6  →  0.70rem  weight: 600  uppercase  tracking: 0.08em
+
+body      →  14px / 1.55 line-height
+.muted    →  0.85rem  color: var(--secondary)
+small     →  0.78rem
+labels    →  0.72rem  uppercase  tracking: 0.05em</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 3. SPACING & RADII                          -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="spacing">
+    <h2>3. Spacing &amp; Radii</h2>
+
+    <p class="note">Tight spacing on an ~8px baseline. Reduced border radii for a sharper feel.</p>
+
+    <div class="sample">
+      <div class="spacing-demo">
+        <div class="spacing-row">
+          <span class="spacing-label">.mt-sm</span>
+          <div class="spacing-bar" style="width:32px"></div>
+          <span class="spacing-val">8px</span>
+        </div>
+        <div class="spacing-row">
+          <span class="spacing-label">.mt-md</span>
+          <div class="spacing-bar" style="width:56px"></div>
+          <span class="spacing-val">14px</span>
+        </div>
+        <div class="spacing-row">
+          <span class="spacing-label">.mt-lg</span>
+          <div class="spacing-bar" style="width:96px"></div>
+          <span class="spacing-val">24px</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="code-label">Border Radius</p>
+    <div class="sample">
+      <div class="row" style="gap:20px;flex-wrap:wrap">
+        <div style="text-align:center">
+          <div style="width:56px;height:56px;background:var(--border);border-radius:4px;margin:0 auto 4px"></div>
+          <span class="spacing-val">4px — default</span>
+        </div>
+        <div style="text-align:center">
+          <div style="width:56px;height:56px;background:var(--border);border-radius:2px;margin:0 auto 4px"></div>
+          <span class="spacing-val">2px — badges</span>
+        </div>
+        <div style="text-align:center">
+          <div style="width:56px;height:56px;background:var(--border);border-radius:999px;margin:0 auto 4px"></div>
+          <span class="spacing-val">999px — chips</span>
+        </div>
+        <div style="text-align:center">
+          <div style="width:56px;height:56px;background:var(--border);border-radius:50%;margin:0 auto 4px"></div>
+          <span class="spacing-val">50% — fab</span>
+        </div>
+      </div>
+    </div>
+
+    <pre><code>--radius: 4px;          /* buttons, inputs, panels */
+--radius-badge: 2px;    /* stage badges */
+border-radius: 999px;   /* filter chips */
+border-radius: 50%;     /* fab */</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 4. BUTTONS                                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="buttons">
+    <h2>4. Buttons</h2>
+
+    <h3>Variants</h3>
+    <div class="sample">
+      <div class="row" style="flex-wrap:wrap">
+        <button class="btn">default</button>
+        <button class="btn btn-dark">primary</button>
+        <button class="btn btn-danger">danger</button>
+        <button class="btn btn-pop">accent</button>
+        <button class="btn" disabled>disabled</button>
+        <a href="#" class="fab" onclick="return false">+</a>
+      </div>
+    </div>
+
+    <pre><code>&lt;button class="btn"&gt;default&lt;/button&gt;
+&lt;button class="btn btn-dark"&gt;primary&lt;/button&gt;
+&lt;button class="btn btn-danger"&gt;danger&lt;/button&gt;
+&lt;button class="btn btn-pop"&gt;accent&lt;/button&gt;
+&lt;a class="fab"&gt;+&lt;/a&gt;</code></pre>
+
+    <h3>Button Pairs</h3>
+    <div class="sample">
+      <div class="row">
+        <button class="btn btn-dark">confirm</button>
+        <button class="btn">cancel</button>
+      </div>
+    </div>
+    <div class="sample">
+      <div class="row">
+        <button class="btn btn-dark">edit</button>
+        <button class="btn btn-danger">delete</button>
+      </div>
+    </div>
+
+    <h3>Specs</h3>
+    <pre><code>padding: 6px 16px
+font-size: 0.82rem
+border-radius: var(--radius)   /* 4px */
+border: 1px solid var(--border)
+font-family: monospace (inherited)
+
+.btn-dark   → bg: var(--accent), color: var(--accent-text)
+.btn-danger → color: var(--pop-red), border: var(--danger-border)
+.btn-pop    → bg: var(--pop-blue), color: #fff
+.fab        → 40×40px circle, bg: var(--accent)</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 5. FORMS                                    -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="forms">
+    <h2>5. Forms</h2>
+
+    <h3>Text Input</h3>
+    <div class="sample">
+      <div class="field">
+        <label for="b-text">project name</label>
+        <input type="text" id="b-text" placeholder="e.g. my-project">
+      </div>
+    </div>
+
+    <h3>Textarea</h3>
+    <div class="sample">
+      <div class="field">
+        <label for="b-area">description</label>
+        <textarea id="b-area" placeholder="goals, scope, details…" style="min-height:72px"></textarea>
+      </div>
+    </div>
+
+    <h3>Select</h3>
+    <div class="sample">
+      <div class="field">
+        <label for="b-sel">stage</label>
+        <select id="b-sel">
+          <option>idea</option>
+          <option>planning</option>
+          <option selected>development</option>
+          <option>released</option>
+          <option>archived</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>Checkboxes</h3>
+    <div class="sample">
+      <div class="checkbox-row">
+        <label><input type="checkbox" checked> commercial</label>
+        <label><input type="checkbox"> open source</label>
+        <label><input type="checkbox" checked> public</label>
+      </div>
+    </div>
+
+    <h3>Radio Buttons</h3>
+    <div class="sample">
+      <div class="checkbox-row">
+        <label><input type="radio" name="b-radio" checked> option a</label>
+        <label><input type="radio" name="b-radio"> option b</label>
+        <label><input type="radio" name="b-radio"> option c</label>
+      </div>
+    </div>
+
+    <h3>Color Picker</h3>
+    <div class="sample">
+      <div class="field">
+        <label>color</label>
+        <div class="row">
+          <input type="color" value="#2563eb">
+          <span class="muted">#2563eb</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Complete Form</h3>
+    <div class="sample">
+      <div class="field">
+        <label>name *</label>
+        <input type="text" placeholder="project name" required>
+      </div>
+      <div class="field">
+        <label>website url</label>
+        <input type="url" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>description</label>
+        <textarea placeholder="tell us about it…" style="min-height:72px"></textarea>
+      </div>
+      <div class="field">
+        <label>stage</label>
+        <select>
+          <option>idea</option>
+          <option>planning</option>
+          <option>development</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="checkbox-row">
+          <label><input type="checkbox"> commercial</label>
+          <label><input type="checkbox"> open source</label>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-dark">save</button>
+        <button class="btn">cancel</button>
+      </div>
+    </div>
+
+    <pre><code>&lt;div class="field"&gt;
+  &lt;label&gt;name *&lt;/label&gt;
+  &lt;input type="text" name="name" required&gt;
+&lt;/div&gt;
+
+&lt;div class="field"&gt;
+  &lt;label&gt;stage&lt;/label&gt;
+  &lt;select name="stage"&gt;...&lt;/select&gt;
+&lt;/div&gt;
+
+&lt;div class="field"&gt;
+  &lt;div class="checkbox-row"&gt;
+    &lt;label&gt;&lt;input type="checkbox"&gt; option&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="row"&gt;
+  &lt;button class="btn btn-dark"&gt;save&lt;/button&gt;
+  &lt;button class="btn"&gt;cancel&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+    <h3>Input Specs</h3>
+    <pre><code>padding: 8px 10px
+font-size: 0.88rem
+border-radius: var(--radius)  /* 4px */
+border: 1px solid var(--border)
+background: var(--surface)
+
+focus → border-color: var(--pop-blue)
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.12)
+textarea min-height: 80px
+labels: 0.72rem, uppercase, tracking 0.05em</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 6. STAGE BADGES                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="badges">
+    <h2>6. Stage Badges</h2>
+
+    <div class="sample">
+      <div class="row" style="flex-wrap:wrap">
+        <span class="stage stage-idea">idea</span>
+        <span class="stage stage-planning">planning</span>
+        <span class="stage stage-dev">dev</span>
+        <span class="stage stage-released">released</span>
+        <span class="stage stage-archived">archived</span>
+      </div>
+    </div>
+
+    <pre><code>&lt;span class="stage stage-idea"&gt;idea&lt;/span&gt;
+&lt;span class="stage stage-planning"&gt;planning&lt;/span&gt;
+&lt;span class="stage stage-dev"&gt;dev&lt;/span&gt;
+&lt;span class="stage stage-released"&gt;released&lt;/span&gt;
+&lt;span class="stage stage-archived"&gt;archived&lt;/span&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>padding: 1px 8px
+border-radius: var(--radius-badge)  /* 2px — sharp, not rounded */
+font-size: 0.68rem
+font-weight: 500
+text-transform: uppercase
+letter-spacing: 0.05em
+
+idea      → bg: #f3f0ff   text: #7c3aed
+planning  → bg: #eff6ff   text: #2563eb
+dev       → bg: #f0fdf4   text: #16a34a
+released  → bg: #fffbeb   text: #d97706
+archived  → bg: #f5f5f5   text: #999999</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 7. ALERTS                                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="alerts">
+    <h2>7. Alerts</h2>
+
+    <p class="note">Left border uses bold accent colors — the only place where vivid color appears in quantity.</p>
+
+    <div class="sample" style="display:flex;flex-direction:column;gap:8px">
+      <div class="alert alert-info">informational — something to be aware of.</div>
+      <div class="alert alert-success">success — the operation completed without errors.</div>
+      <div class="alert alert-warning">warning — this action may have unintended consequences.</div>
+      <div class="alert alert-danger">error — something went wrong. please try again.</div>
+    </div>
+
+    <pre><code>&lt;div class="alert alert-info"&gt;info message&lt;/div&gt;
+&lt;div class="alert alert-success"&gt;success message&lt;/div&gt;
+&lt;div class="alert alert-warning"&gt;warning message&lt;/div&gt;
+&lt;div class="alert alert-danger"&gt;error message&lt;/div&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>padding: 10px 14px
+border-radius: var(--radius)  /* 4px */
+border-left: 3px solid        /* bold accent strip */
+
+info     bg: #eff6ff  text: #2563eb  left: var(--pop-blue)
+success  bg: #f0fdf4  text: #16a34a  left: var(--pop-green)
+warning  bg: #fffbeb  text: #d97706  left: var(--pop-amber)
+danger   bg: #fef2f2  text: #dc2626  left: var(--pop-red)</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 8. LIST ITEMS                               -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="list-items">
+    <h2>8. List Items</h2>
+
+    <p class="note">Flat list with bottom borders — no cards. Scoring uses pop-blue pip rings: filled pips have an inner dot, empty pips are hollow rings.</p>
+
+    <div class="sample" style="padding:0">
+      <div class="list" style="padding:0 16px">
+        <a href="#" class="list-item" onclick="return false">
+          <div class="list-item-top">
+            <span class="item-name">a-apps</span>
+            <span class="stage stage-dev">dev</span>
+          </div>
+          <p class="item-desc">personal app monorepo with go and htmx</p>
+          <div class="list-item-bottom">
+            <span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span></span>
+            <span class="flags">open-source · public</span>
+          </div>
+        </a>
+        <a href="#" class="list-item" onclick="return false">
+          <div class="list-item-top">
+            <span class="item-name">acme-crm</span>
+            <span class="stage stage-idea">idea</span>
+          </div>
+          <p class="item-desc">client management system for small teams</p>
+          <div class="list-item-bottom">
+            <span class="rating empty-rating">—</span>
+            <span class="flags">commercial</span>
+          </div>
+        </a>
+        <a href="#" class="list-item" onclick="return false" style="border-bottom:none">
+          <div class="list-item-top">
+            <span class="item-name">budget-tracker</span>
+            <span class="stage stage-released">released</span>
+          </div>
+          <p class="item-desc">simple personal finance tracking</p>
+          <div class="list-item-bottom">
+            <span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span></span>
+            <span class="flags">open-source · public</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <pre><code>&lt;div class="list"&gt;
+  &lt;a href="/project/1" class="list-item"&gt;
+    &lt;div class="list-item-top"&gt;
+      &lt;span class="item-name"&gt;name&lt;/span&gt;
+      &lt;span class="stage stage-dev"&gt;dev&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;p class="item-desc"&gt;description&lt;/p&gt;
+    &lt;div class="list-item-bottom"&gt;
+      &lt;span class="rating"&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip"&gt;&lt;/span&gt;
+      &lt;/span&gt;
+      &lt;span class="flags"&gt;tag · tag&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/a&gt;
+&lt;/div&gt;</code></pre>
+
+    <h3>Rating Scale Reference</h3>
+    <div class="sample">
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:0.82rem">
+        <div class="row"><span style="min-width:30px">5/5</span> <span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span></span></div>
+        <div class="row"><span style="min-width:30px">4/5</span> <span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span></span></div>
+        <div class="row"><span style="min-width:30px">3/5</span> <span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span class="pip"></span></span></div>
+        <div class="row"><span style="min-width:30px">2/5</span> <span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span></span></div>
+        <div class="row"><span style="min-width:30px">1/5</span> <span class="rating"><span class="pip on"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span></span></div>
+        <div class="row"><span style="min-width:30px">—</span> <span class="rating empty-rating">—</span></div>
+      </div>
+    </div>
+
+    <h3>Specs</h3>
+    <pre><code>.list-item: padding 14px 0, border-bottom 1px solid var(--border)
+.item-name: weight 600, 0.95rem
+.item-desc: color var(--secondary), 0.82rem
+.list-item-bottom: 0.75rem, space-between
+
+/* rating pips */
+.rating: inline-flex, gap 3px
+.pip: 10×10px circle, border 1.5px solid var(--pop-blue)
+.pip.on: radial-gradient center dot (35% fill)
+.rating.empty-rating → color: var(--secondary), shows "—"</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 9. PANELS                                   -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="panels">
+    <h2>9. Panels</h2>
+
+    <p class="note">Use panels for forms, configuration, and content groups.</p>
+
+    <div class="sample">
+      <div class="panel">
+        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;text-transform:none;letter-spacing:0;color:var(--text)">new project</h3>
+        <p class="muted">fill in the details to create a new project.</p>
+      </div>
+    </div>
+
+    <div class="sample">
+      <div class="panel center">
+        <p class="muted">no projects yet.</p>
+      </div>
+    </div>
+
+    <pre><code>&lt;div class="panel"&gt;
+  &lt;h3&gt;title&lt;/h3&gt;
+  &lt;p class="muted"&gt;content&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>background: var(--surface)
+border: 1px solid var(--border)
+border-radius: var(--radius)  /* 4px */
+padding: 16px</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 10. TABLES                                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="tables">
+    <h2>10. Tables</h2>
+
+    <div class="sample" style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>name</th>
+            <th>stage</th>
+            <th>rating</th>
+            <th>flags</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>a-apps</td>
+            <td><span class="stage stage-dev">dev</span></td>
+            <td><span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span></span></td>
+            <td class="flags">open-source · public</td>
+          </tr>
+          <tr>
+            <td>acme-crm</td>
+            <td><span class="stage stage-idea">idea</span></td>
+            <td class="rating empty-rating">—</td>
+            <td class="flags">commercial</td>
+          </tr>
+          <tr>
+            <td>budget-tracker</td>
+            <td><span class="stage stage-released">released</span></td>
+            <td><span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span></span></td>
+            <td class="flags">open-source</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre><code>&lt;table class="data-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;name&lt;/th&gt;&lt;th&gt;stage&lt;/th&gt;&lt;th&gt;rating&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;a-apps&lt;/td&gt;
+      &lt;td&gt;&lt;span class="stage stage-dev"&gt;dev&lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;span class="rating"&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip on"&gt;&lt;/span&gt;
+        &lt;span class="pip"&gt;&lt;/span&gt;
+      &lt;/span&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>border-collapse: collapse
+th: uppercase 0.7rem, weight 600, color var(--secondary)
+th: padding 6px 10px, border-bottom 2px solid var(--border)
+td: padding 8px 10px, border-bottom 1px solid var(--border)
+last row: no bottom border</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 11. TIMELINE                                -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="timeline">
+    <h2>11. Timeline</h2>
+
+    <p class="note">Vertical rule with dots. Dashed horizontal connectors bridge each dot to its content.</p>
+
+    <div class="sample">
+      <div class="timeline">
+
+        <article class="entry">
+          <div class="entry-date">2026-02-24</div>
+          <div class="entry-text">set up CI pipeline for automated deploys</div>
+          <div class="entry-actions">
+            <button>reply</button>
+            <button>delete</button>
+          </div>
+        </article>
+
+        <article class="entry nested">
+          <div class="entry-date">2026-02-24</div>
+          <div class="entry-text">added GitHub Actions workflow config</div>
+          <div class="entry-actions">
+            <button>reply</button>
+            <button>delete</button>
+          </div>
+        </article>
+
+        <article class="entry nested">
+          <div class="entry-date">2026-02-24</div>
+          <div class="entry-text">fixed lint step — was missing golangci-lint</div>
+          <div class="entry-actions">
+            <button>reply</button>
+            <button>delete</button>
+          </div>
+        </article>
+
+        <article class="entry">
+          <div class="entry-date">2026-02-20</div>
+          <div class="entry-text">initial research on tech stack</div>
+          <div class="entry-actions">
+            <button>reply</button>
+            <button>delete</button>
+          </div>
+        </article>
+
+        <article class="entry nested">
+          <div class="entry-date">2026-02-20</div>
+          <div class="entry-text">found useful HTMX patterns → <a href="#">htmx.org/examples</a></div>
+          <div class="entry-actions">
+            <button>reply</button>
+            <button>delete</button>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <pre><code>&lt;div class="timeline"&gt;
+  &lt;article class="entry"&gt;
+    &lt;div class="entry-date"&gt;2026-02-24&lt;/div&gt;
+    &lt;div class="entry-text"&gt;entry text&lt;/div&gt;
+    &lt;div class="entry-actions"&gt;
+      &lt;button&gt;reply&lt;/button&gt;
+      &lt;button&gt;delete&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/article&gt;
+  &lt;article class="entry nested"&gt;
+    &lt;div class="entry-date"&gt;2026-02-24&lt;/div&gt;
+    &lt;div class="entry-text"&gt;nested reply&lt;/div&gt;
+  &lt;/article&gt;
+&lt;/div&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>.timeline: padding-left 20px, vertical line via ::before
+
+vertical line:
+  position: absolute, left 3px, width 1px
+  background: var(--border)
+
+.entry::before (dot):
+  7×7px circle at left: -20px
+  bg: var(--border), border: 2px solid var(--bg)
+
+.entry::after (horizontal dashed connector):
+  left: -10px, width: 8px
+  border-top: 1px dashed var(--border)
+
+.entry.nested:
+  margin-left: 20px
+  dot: left -40px, hollow (border only)
+  connector: left -30px, width 28px
+
+.entry-date: 0.68rem, color var(--secondary)
+.entry-text: 0.85rem
+.entry-actions button: no bg/border, 0.72rem, underline on hover</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 12. DETAIL METADATA                         -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="detail-meta">
+    <h2>12. Detail Metadata</h2>
+
+    <div class="sample">
+      <table class="meta-table">
+        <tr>
+          <td>stage</td>
+          <td><span class="stage stage-dev">dev</span></td>
+        </tr>
+        <tr>
+          <td>rating</td>
+          <td><span class="rating"><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip on"></span><span class="pip"></span></span></td>
+        </tr>
+        <tr>
+          <td>website</td>
+          <td><a href="#">apps.example.com</a></td>
+        </tr>
+        <tr>
+          <td>source</td>
+          <td><a href="#">github.com/user/a-apps</a></td>
+        </tr>
+        <tr>
+          <td>flags</td>
+          <td>open-source · public</td>
+        </tr>
+      </table>
+    </div>
+
+    <pre><code>&lt;table class="meta-table"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;label&lt;/td&gt;
+    &lt;td&gt;value&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>.meta-table td: padding 6px 0, border-bottom 1px solid var(--border)
+first-child: color var(--secondary), width 80px
+links: underline with border-color decoration, offset 2px</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 13. FILTER CHIPS                            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="filters">
+    <h2>13. Filter Chips</h2>
+
+    <div class="sample">
+      <div class="filter-bar" style="padding:0">
+        <button class="chip active">all</button>
+        <button class="chip">idea</button>
+        <button class="chip">planning</button>
+        <button class="chip">dev</button>
+        <button class="chip">released</button>
+        <button class="chip">archived</button>
+      </div>
+    </div>
+
+    <pre><code>&lt;div class="filter-bar"&gt;
+  &lt;button class="chip active"&gt;all&lt;/button&gt;
+  &lt;button class="chip"&gt;idea&lt;/button&gt;
+  &lt;button class="chip"&gt;planning&lt;/button&gt;
+  ...
+&lt;/div&gt;</code></pre>
+
+    <h3>Specs</h3>
+    <pre><code>.filter-bar: flex, gap 6px, overflow-x auto
+.chip: padding 4px 12px, border-radius 999px (pill)
+       font-size 0.78rem, border 1px solid var(--border)
+.chip.active: bg var(--accent), color var(--accent-text)</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 14. LAYOUT SHELL                            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="layout">
+    <h2>14. Layout Shell</h2>
+
+    <h3>Header</h3>
+    <div class="sample" style="padding:0 16px">
+      <div class="header-demo">
+        <h1>projects</h1>
+      </div>
+    </div>
+
+    <h3>Header + Actions</h3>
+    <div class="sample" style="padding:0 16px">
+      <div class="header-demo" style="display:flex;align-items:center;justify-content:space-between">
+        <h1>projects</h1>
+        <button class="btn" style="font-size:0.75rem;padding:3px 10px">logout</button>
+      </div>
+    </div>
+
+    <h3>Back Link</h3>
+    <div class="sample">
+      <a href="#" class="back" onclick="return false">← back</a>
+    </div>
+
+    <h3>Section Label</h3>
+    <div class="sample">
+      <div class="section-label">description</div>
+      <p style="font-size:0.88rem">section content goes below the label.</p>
+    </div>
+
+    <pre><code>&lt;!-- full page shell --&gt;
+&lt;body&gt;                          &lt;!-- max-width: 540px, centered --&gt;
+  &lt;header class="header"&gt;
+    &lt;h1&gt;projects&lt;/h1&gt;
+  &lt;/header&gt;
+  &lt;main class="list"&gt;
+    ...
+  &lt;/main&gt;
+  &lt;a class="fab"&gt;+&lt;/a&gt;
+&lt;/body&gt;
+
+&lt;!-- back link --&gt;
+&lt;a href="/" class="back"&gt;← back&lt;/a&gt;
+
+&lt;!-- section label --&gt;
+&lt;div class="section-label"&gt;description&lt;/div&gt;</code></pre>
+
+    <h3>Layout Specs</h3>
+    <pre><code>body: max-width 540px, margin 0 auto, padding 0 16px
+.header: padding 20px 0 12px, border-bottom 2px solid var(--text)
+h1: 1.1rem, weight 700, tracking 0.04em, lowercase</code></pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- 15. UTILITY CLASSES                         -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="utilities">
+    <h2>15. Utility Classes</h2>
+
+    <div class="sample" style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr><th>class</th><th>property</th><th>value</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>.row</code></td><td>display</td><td>flex, gap: 8px, align-items: center</td></tr>
+          <tr><td><code>.space-between</code></td><td>justify-content</td><td>space-between</td></tr>
+          <tr><td><code>.mt-sm</code></td><td>margin-top</td><td>8px</td></tr>
+          <tr><td><code>.mt-md</code></td><td>margin-top</td><td>14px</td></tr>
+          <tr><td><code>.mt-lg</code></td><td>margin-top</td><td>24px</td></tr>
+          <tr><td><code>.mb-sm</code></td><td>margin-bottom</td><td>8px</td></tr>
+          <tr><td><code>.mb-md</code></td><td>margin-bottom</td><td>14px</td></tr>
+          <tr><td><code>.mb-lg</code></td><td>margin-bottom</td><td>24px</td></tr>
+          <tr><td><code>.center</code></td><td>text-align</td><td>center</td></tr>
+          <tr><td><code>.muted</code></td><td>color / size</td><td>var(--secondary) / 0.85rem</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Row + Space Between</h3>
+    <div class="sample">
+      <div class="row space-between">
+        <span>left content</span>
+        <span class="muted">right content</span>
+      </div>
+    </div>
+
+    <h3>Margin Stacking</h3>
+    <div class="sample">
+      <div style="background:var(--border);padding:6px 8px;border-radius:2px">block a</div>
+      <div class="mt-sm" style="background:var(--border);padding:6px 8px;border-radius:2px">block b (.mt-sm = 8px)</div>
+      <div class="mt-md" style="background:var(--border);padding:6px 8px;border-radius:2px">block c (.mt-md = 14px)</div>
+      <div class="mt-lg" style="background:var(--border);padding:6px 8px;border-radius:2px">block d (.mt-lg = 24px)</div>
+    </div>
+
+    <pre><code>&lt;div class="row space-between mb-md"&gt;
+  &lt;h1&gt;title&lt;/h1&gt;
+  &lt;a class="fab"&gt;+&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;div class="mt-md"&gt;
+  &lt;p class="muted center"&gt;nothing here yet.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+  </section>
+
+</div>
+</body>
+</html>
