@@ -162,8 +162,8 @@ func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
 func (h *Handler) homeContent(stores []Store) string {
 	content := `
 		<div class="row space-between mb-md">
-			<h2>Shopping Lists</h2>
-			<button class="btn-add" hx-get="/stores/new" hx-target="#modal">+</button>
+			<h2>lists</h2>
+			<button class="btn" hx-get="/stores/new" hx-target="#modal">+ add list</button>
 		</div>
 	`
 

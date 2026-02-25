@@ -15,9 +15,9 @@ const BaseHTML = `<!DOCTYPE html>
         <header class="top-bar">
             <h1>{{.AppName}}</h1>
             {{if .Username}}
-            <form action="/logout" method="POST">
+            <!--form action="/logout" method="POST">
                 <button type="submit">Logout</button>
-            </form>
+            </form-->
             {{end}}
         </header>
         <main class="content">

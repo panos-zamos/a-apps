@@ -61,17 +61,19 @@ func (h *Handler) DeleteStore(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) NewStoreForm(w http.ResponseWriter, r *http.Request) {
 	html := `
 		<div class="panel">
-			<h2>New Store</h2>
+			<h3>new store</h3>
 			<form hx-post="/stores" hx-target="#modal" class="mt-md">
-				<label>Store Name</label>
-				<input type="text" name="name" required placeholder="e.g., Supermarket, Pharmacy">
-				<div class="mt-md">
-					<label>Color</label>
-					<input type="color" name="color" value="#3B82F6">
+				<div class="field">
+					<label>name</label>
+					<input type="text" name="name" required placeholder="e.g., supermarket">
+				</div>
+				<div class="field">
+					<label>color</label>
+					<input type="color" name="color" value="#2563eb">
 				</div>
 				<div class="row mt-md">
-					<button type="submit" class="primary">Create</button>
-					<button type="button" onclick="this.closest('.panel').remove()">Cancel</button>
+					<button type="submit" class="btn btn-pop">Create</button>
+					<button type="button" class="btn" onclick="this.closest('.panel').remove()">Cancel</button>
 				</div>
 			</form>
 		</div>
@@ -193,7 +195,7 @@ func (h *Handler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) storesGrid(stores []Store) string {
-	content := `<div id="stores-container" class="card-list">`
+	content := `<div id="stores-container" class="list">`
 
 	if len(stores) == 0 {
 		content += `
@@ -212,13 +214,13 @@ func (h *Handler) storesGrid(stores []Store) string {
 		}
 
 		content += fmt.Sprintf(`
-			<article class="card">
-				<div class="row space-between mb-sm">
-					<span class="card-name">%s</span>
-					<button class="danger" hx-delete="/stores/%d" hx-confirm="Delete this store and all items?" hx-target="#stores-container" hx-swap="outerHTML">Delete</button>
+			<article class="panel mb-md">
+				<div class="row space-between mb-md">
+					<h3>%s</h3>
+					<button class="btn btn-danger" hx-delete="/stores/%d" hx-confirm="Delete this store and all items?" hx-target="#stores-container" hx-swap="outerHTML">delete</button>
 				</div>
 
-				<p class="muted mb-sm">%d items to buy</p>
+				<p class="muted mb-md">%d items to buy</p>
 
 				<div id="store-%d-items">
 		`, store.Name, store.ID, uncheckedCount, store.ID)
@@ -240,7 +242,7 @@ func (h *Handler) storesGrid(stores []Store) string {
 						<span>%s</span>
 						<span class="muted">%s</span>
 					</div>
-					<button class="danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+					<button class="btn btn-danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">remove</button>
 				</div>
 			`, checkedAttr, item.ID, itemName, itemQuantity, item.ID)
 		}
@@ -249,14 +251,16 @@ func (h *Handler) storesGrid(stores []Store) string {
 				</div>
 
 				<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
-					<label>Item</label>
-					<input type="text" name="name" placeholder="Add item..." required>
-					<div class="mt-sm">
-						<label>Quantity</label>
+					<div class="field">
+						<label>item</label>
+						<input type="text" name="name" placeholder="Add item..." required>
+					</div>
+					<div class="field">
+						<label>quantity</label>
 						<input type="text" name="quantity" placeholder="Qty (optional)">
 					</div>
-					<div class="mt-sm">
-						<button type="submit" class="primary">Add Item</button>
+					<div class="row">
+						<button type="submit" class="btn btn">Add</button>
 					</div>
 				</form>
 			</article>
