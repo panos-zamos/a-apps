@@ -53,3 +53,5 @@ node_modules/
 
 # Docker
 *.pid
+apps/projects/projects
+apps/todo-list/todo-list
