@@ -53,5 +53,7 @@ node_modules/
 
 # Docker
 *.pid
+
+# also Binaries
 apps/projects/projects
 apps/todo-list/todo-list
