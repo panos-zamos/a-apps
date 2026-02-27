@@ -34,6 +34,27 @@ A monorepo for hosting multiple small web applications with minimal friction. Bu
 
 3. **Access:** http://localhost:3005
 
+### Run All Apps with Docker (Local)
+
+To run all apps and the Caddy reverse proxy locally:
+
+```bash
+docker-compose -f deploy/docker-compose.yml up --build
+```
+
+Then access your apps at:
+
+- http://localhost/todo
+- http://localhost/projects
+
+If you want to use a custom domain (with HTTPS), set the DOMAIN variable:
+
+```bash
+DOMAIN=yourdomain.com docker-compose -f deploy/docker-compose.yml up --build
+```
+
+Caddy will automatically provision HTTPS certificates for real domains.
+
 ### Deployment
 
 1. **Build all apps:**

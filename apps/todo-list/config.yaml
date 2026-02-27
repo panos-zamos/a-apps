@@ -8,3 +8,5 @@ users:
   - username: panos
     password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2"  # password: demo123
 #    password_hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"  # password: demo123
+  - username: lili
+    password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2"  # password: demo123

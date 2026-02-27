@@ -26,14 +26,6 @@ echo -e "${GREEN}Deploying to $SERVER_USER@$SERVER_HOST:$SERVER_PATH${NC}"
 echo -e "${YELLOW}Creating backup...${NC}"
 ./scripts/backup.sh
 
-# Build locally (optional, could also build on server)
-echo -e "${YELLOW}Building Docker images...${NC}"
-docker-compose -f deploy/docker-compose.yml build
-
-# Save images to tar (alternative: use registry)
-# echo -e "${YELLOW}Saving images...${NC}"
-# docker save ... (if using tar transfer method)
-
 # Sync code to server
 echo -e "${YELLOW}Syncing code to server...${NC}"
 rsync -avz --exclude='node_modules' --exclude='data' --exclude='tmp' \
@@ -57,6 +49,13 @@ ssh $SERVER_USER@$SERVER_HOST << EOF
     # Show status
     docker-compose -f deploy/docker-compose.yml ps
 EOF
+
+# Download database backups from server
+echo -e "${YELLOW}Downloading database backups from server...${NC}"
+mkdir -p backups/remote
+rsync -avz $SERVER_USER@$SERVER_HOST:$SERVER_PATH/apps/*/data/*.db backups/remote/ 2>/dev/null \
+    && echo -e "${GREEN}✓ Backups downloaded to backups/remote/${NC}" \
+    || echo -e "${YELLOW}No remote databases found to download${NC}"
 
 echo -e "${GREEN}✓ Deployment complete!${NC}"
 echo -e "${YELLOW}Check logs with: ssh $SERVER_USER@$SERVER_HOST 'cd $SERVER_PATH && docker-compose -f deploy/docker-compose.yml logs -f'${NC}"

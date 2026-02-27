@@ -12,14 +12,19 @@ const BaseHTML = `<!DOCTYPE html>
 </head>
 <body>
     <div class="app">
-        <header class="top-bar">
-            <h1>{{.AppName}}</h1>
-            {{if .Username}}
-            <!--form action="/logout" method="POST">
-                <button type="submit">Logout</button>
-            </form-->
-            {{end}}
-        </header>
+                <header class="top-bar row space-between" style="align-items: center;">
+                        <h1>{{.AppName}}</h1>
+                        {{if .Username}}
+                        <form action="/logout" method="POST" style="margin:0;">
+                                <button type="submit" title="Log out" style="background:none;border:none;padding:0;cursor:pointer;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-power">
+                                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+                                        <line x1="12" y1="2" x2="12" y2="12"/>
+                                    </svg>
+                                </button>
+                        </form>
+                        {{end}}
+                </header>
         <main class="content">
             {{.Content}}
         </main>

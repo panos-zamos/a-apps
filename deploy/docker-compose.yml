@@ -1,15 +1,18 @@
 version: '3.8'
 
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: a-apps-nginx
+  caddy:
+    image: caddy:alpine
+    container_name: a-apps-caddy
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro  # For HTTPS certificates
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data      # TLS certificates
+      - caddy_config:/config  # Caddy config cache
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
     depends_on:
       - todo-list
     restart: unless-stopped
@@ -36,6 +39,29 @@ services:
     networks:
       - a-apps-network
 
+  projects:
+    build:
+      context: ../apps/projects
+      dockerfile: Dockerfile
+    container_name: a-apps-projects
+    environment:
+      - PORT=3002
+      - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
+    volumes:
+      - ../apps/projects/data:/root/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - a-apps-network
+
 networks:
   a-apps-network:
     driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

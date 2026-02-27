@@ -1,0 +1,36 @@
+{$DOMAIN:localhost} {
+	# Gzip compression
+	encode gzip
+
+	# Request body size limit
+	request_body {
+		max_size 20MB
+	}
+
+	# Health check
+	handle /health {
+		respond "OK" 200
+	}
+
+	# Todo list app
+	handle_path /todo/* {
+		reverse_proxy todo-list:3001
+	}
+	handle /todo {
+		reverse_proxy todo-list:3001
+	}
+
+	# Projects app
+	handle_path /projects/* {
+		reverse_proxy projects:3002
+	}
+	handle /projects {
+		reverse_proxy projects:3002
+	}
+
+	# Default route
+	handle {
+		respond "A-Apps Platform
+Add your apps here!" 200
+	}
+}
