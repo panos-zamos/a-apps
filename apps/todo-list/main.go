@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -43,6 +44,8 @@ func main() {
 		}
 	}
 
+	basePath := normalizeBasePath(os.Getenv("BASE_PATH"))
+
 	// Open database
 	db, err := database.Open("data/todo-list.db")
 	if err != nil {
@@ -73,6 +76,7 @@ func main() {
 		Users:     users,
 		JWTSecret: jwtSecret,
 		AppConfig: appConfig,
+		BasePath:  basePath,
 	}
 
 	// Public routes
@@ -85,7 +89,7 @@ func main() {
 
 	// Protected routes
 	r.Group(func(r chi.Router) {
-		r.Use(auth.Middleware(jwtSecret))
+		r.Use(auth.Middleware(jwtSecret, basePath))
 		r.Get("/", h.Home)
 
 		// Store management
@@ -105,4 +109,15 @@ func main() {
 	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func normalizeBasePath(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" || value == "/" {
+		return ""
+	}
+	if !strings.HasPrefix(value, "/") {
+		value = "/" + value
+	}
+	return strings.TrimRight(value, "/")
 }

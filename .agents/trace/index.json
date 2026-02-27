@@ -1,5 +1,5 @@
 {
-  "latest_trace": "trace-8.json",
+  "latest_trace": "trace-18.json",
   "sessions": [
     {
       "task": {
@@ -72,6 +72,96 @@
       "started_at": "2026-02-27T18:50:00Z",
       "ended_at": null,
       "trace": "trace-8.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Explain deployment env vars for JWT_SECRET and DOMAIN"
+      },
+      "started_at": "2026-02-27T18:38:01Z",
+      "ended_at": "2026-02-27T18:38:40Z",
+      "trace": "trace-9.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Switch deploy script to docker compose and confirm paths"
+      },
+      "started_at": "2026-02-27T18:38:50Z",
+      "ended_at": "2026-02-27T18:39:20Z",
+      "trace": "trace-10.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Document local docker compose usage"
+      },
+      "started_at": "2026-02-27T18:38:01Z",
+      "ended_at": "2026-02-27T18:40:00Z",
+      "trace": "trace-11.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Fix docker compose build contexts for shared modules"
+      },
+      "started_at": "2026-02-27T18:40:10Z",
+      "ended_at": "2026-02-27T18:42:00Z",
+      "trace": "trace-12.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Fix Docker build missing gcc for CGO"
+      },
+      "started_at": "2026-02-27T18:42:10Z",
+      "ended_at": "2026-02-27T18:42:50Z",
+      "trace": "trace-13.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Fix Caddy routing for base paths"
+      },
+      "started_at": "2026-02-27T18:43:10Z",
+      "ended_at": "2026-02-27T18:44:00Z",
+      "trace": "trace-14.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Fix base-path routing for apps behind Caddy"
+      },
+      "started_at": "2026-02-27T18:45:10Z",
+      "ended_at": "2026-02-27T18:52:00Z",
+      "trace": "trace-15.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Fix base-path routing for apps behind Caddy"
+      },
+      "started_at": "2026-02-27T18:45:10Z",
+      "ended_at": "2026-02-27T18:52:00Z",
+      "trace": "trace-16.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Update changelog and README for base-path routing"
+      },
+      "started_at": "2026-02-27T18:53:00Z",
+      "ended_at": "2026-02-27T18:55:00Z",
+      "trace": "trace-17.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Document requirements analysis and architecture refactor proposal"
+      },
+      "started_at": "2026-02-27T18:56:00Z",
+      "ended_at": "2026-02-27T18:57:30Z",
+      "trace": "trace-18.json"
     }
   ]
 }

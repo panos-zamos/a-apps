@@ -1,0 +1,50 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Fix base-path routing for apps behind Caddy",
+    "author": "user",
+    "started_at": "2026-02-27T18:45:10Z",
+    "ended_at": "2026-02-27T18:52:00Z"
+  },
+  "agents": [
+    {"name": "code_agent", "model": "unknown", "role": "implementation"}
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Reported /login redirects breaking behind /todo and /projects base paths and worried about deployment routing.",
+      "timestamp": "2026-02-27T18:45:10Z"
+    },
+    {
+      "step_id": 2,
+      "type": "research",
+      "actor": "agent",
+      "summary": "Reviewed shared auth middleware, templates, and app routes to identify hard-coded absolute paths and /projects-prefixed routes. Evidence: shared/auth/middleware.go, shared/templates/base.go, apps/todo-list/handlers, apps/projects/handlers, apps/projects/main.go, deploy/Caddyfile.",
+      "timestamp": "2026-02-27T18:46:00Z"
+    },
+    {
+      "step_id": 3,
+      "type": "decision",
+      "actor": "agent",
+      "summary": "Adopted BASE_PATH-aware URL helpers so apps generate prefixed links/redirects while Caddy continues to strip /todo and /projects via handle_path; projects routes were normalized to root-relative paths with base-path prefixing applied for the browser.",
+      "timestamp": "2026-02-27T18:47:10Z",
+      "decision": "accepted"
+    },
+    {
+      "step_id": 4,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Touched: shared/auth/middleware.go, shared/templates/base.go, apps/todo-list/main.go, apps/todo-list/handlers/handler.go, apps/todo-list/handlers/items.go, apps/projects/main.go, apps/projects/handlers/handler.go, apps/projects/handlers/projects.go, deploy/docker-compose.yml.",
+      "timestamp": "2026-02-27T18:51:30Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": false,
+    "notes": "Not run (routing/config changes only)."
+  },
+  "final_summary": "Added BASE_PATH support across auth, templates, and handlers so redirects/HTMX URLs resolve under /todo and /projects, normalized projects routes to root-relative paths, and set BASE_PATH env vars in docker-compose for correct local and droplet routing behind Caddy."
+}

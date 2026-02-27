@@ -34,7 +34,7 @@ func (h *Handler) CreateStore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to home to reload
-	w.Header().Set("HX-Redirect", "/")
+	w.Header().Set("HX-Redirect", h.path("/"))
 }
 
 // DeleteStore handles deleting a store
@@ -62,10 +62,10 @@ func (h *Handler) DeleteStore(w http.ResponseWriter, r *http.Request) {
 
 // NewStoreForm returns the form for creating a new store
 func (h *Handler) NewStoreForm(w http.ResponseWriter, r *http.Request) {
-	html := `
+	html := fmt.Sprintf(`
 		<div class="panel">
 			<h3>new store</h3>
-			<form hx-post="/stores" hx-target="#modal" class="mt-md">
+			<form hx-post="%s" hx-target="#modal" class="mt-md">
 				<div class="field">
 					<label>name</label>
 					<input type="text" name="name" required placeholder="e.g., supermarket">
@@ -80,7 +80,7 @@ func (h *Handler) NewStoreForm(w http.ResponseWriter, r *http.Request) {
 				</div>
 			</form>
 		</div>
-	`
+	`, h.path("/stores"))
 	w.Write([]byte(html))
 }
 
@@ -120,19 +120,21 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 	itemID, _ := result.LastInsertId()
 
 	// Return the new item HTML
+	togglePath := h.path(fmt.Sprintf("/items/%d/toggle", itemID))
+	deletePath := h.path(fmt.Sprintf("/items/%d", itemID))
 	html := fmt.Sprintf(`
 		<div class="row space-between mb-sm">
 			<div class="row">
-				<input type="checkbox" hx-post="/items/%d/toggle" hx-target="closest .space-between" hx-swap="outerHTML">
+				<input type="checkbox" hx-post="%s" hx-target="closest .space-between" hx-swap="outerHTML">
 				<span>%s</span>
 				<span class="muted">%s</span>
 			</div>
 			<div class="row">
 				<span class="muted">@%s</span>
-				<button class="btn btn-danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+				<button class="btn btn-danger" hx-delete="%s" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
 			</div>
 		</div>
-	`, itemID, name, quantity, username, itemID)
+	`, togglePath, name, quantity, username, deletePath)
 
 	w.Write([]byte(html))
 }
@@ -183,19 +185,21 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return updated item HTML
+	togglePath := h.path(fmt.Sprintf("/items/%s/toggle", itemID))
+	deletePath := h.path(fmt.Sprintf("/items/%s", itemID))
 	html := fmt.Sprintf(`
 		<div class="row space-between mb-sm">
 			<div class="row">
-				<input type="checkbox" %s hx-post="/items/%s/toggle" hx-target="closest .space-between" hx-swap="outerHTML">
+				<input type="checkbox" %s hx-post="%s" hx-target="closest .space-between" hx-swap="outerHTML">
 				<span>%s</span>
 				<span class="muted">%s</span>
 			</div>
 			<div class="row">
 				<span class="muted">@%s</span>
-				<button class="btn btn-danger" hx-delete="/items/%s" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+				<button class="btn btn-danger" hx-delete="%s" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
 			</div>
 		</div>
-	`, checkedAttr, itemID, itemName, itemQuantity, itemUsername, itemID)
+	`, checkedAttr, togglePath, itemName, itemQuantity, itemUsername, deletePath)
 
 	w.Write([]byte(html))
 }
@@ -254,17 +258,18 @@ func (h *Handler) storesGrid(stores []Store) string {
 			}
 		}
 
+		storeDeletePath := h.path(fmt.Sprintf("/stores/%d", store.ID))
 		content += fmt.Sprintf(`
 			<article class="panel mb-md">
 				<div class="row space-between mb-md">
 					<h3>%s</h3>
-					<button class="btn btn-danger" hx-delete="/stores/%d" hx-confirm="Delete this store and all items?" hx-target="#stores-container" hx-swap="outerHTML">delete</button>
+					<button class="btn btn-danger" hx-delete="%s" hx-confirm="Delete this store and all items?" hx-target="#stores-container" hx-swap="outerHTML">delete</button>
 				</div>
 
 				<p class="muted mb-md">%d items to buy</p>
 
 				<div id="store-%d-items">
-		`, store.Name, store.ID, uncheckedCount, store.ID)
+		`, store.Name, storeDeletePath, uncheckedCount, store.ID)
 
 		for _, item := range store.Items {
 			checkedAttr := ""
@@ -276,25 +281,28 @@ func (h *Handler) storesGrid(stores []Store) string {
 				itemQuantity = fmt.Sprintf("<del>%s</del>", item.Quantity)
 			}
 
+			itemTogglePath := h.path(fmt.Sprintf("/items/%d/toggle", item.ID))
+			itemDeletePath := h.path(fmt.Sprintf("/items/%d", item.ID))
 			content += fmt.Sprintf(`
 				<div class="row space-between mb-sm">
 					<div class="row">
-						<input type="checkbox" %s hx-post="/items/%d/toggle" hx-target="closest .space-between" hx-swap="outerHTML">
+						<input type="checkbox" %s hx-post="%s" hx-target="closest .space-between" hx-swap="outerHTML">
 						<span>%s</span>
 						<span class="muted">%s</span>
 					</div>
 					<div class="row">
 						<span class="muted">@%s</span>
-						<button class="btn btn-danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">remove</button>
+						<button class="btn btn-danger" hx-delete="%s" hx-target="closest .space-between" hx-swap="outerHTML">remove</button>
 					</div>
 				</div>
-			`, checkedAttr, item.ID, itemName, itemQuantity, item.Username, item.ID)
+			`, checkedAttr, itemTogglePath, itemName, itemQuantity, item.Username, itemDeletePath)
 		}
 
+		storeItemsPath := h.path(fmt.Sprintf("/stores/%d/items", store.ID))
 		content += fmt.Sprintf(`
 				</div>
 
-				<form hx-post="/stores/%d/items" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
+				<form hx-post="%s" hx-target="#store-%d-items" hx-swap="beforeend" class="mt-md">
 					<div class="field">
 						<label>item</label>
 						<input type="text" name="name" placeholder="Add item..." required>
@@ -308,7 +316,7 @@ func (h *Handler) storesGrid(stores []Store) string {
 					</div>
 				</form>
 			</article>
-		`, store.ID, store.ID)
+		`, storeItemsPath, store.ID)
 	}
 
 	content += `</div>`

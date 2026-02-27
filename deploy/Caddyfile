@@ -17,7 +17,7 @@
 		reverse_proxy todo-list:3001
 	}
 	handle /todo {
-		reverse_proxy todo-list:3001
+		redir /todo/ 302
 	}
 
 	# Projects app
@@ -25,7 +25,7 @@
 		reverse_proxy projects:3002
 	}
 	handle /projects {
-		reverse_proxy projects:3002
+		redir /projects/ 302
 	}
 
 	# Default route

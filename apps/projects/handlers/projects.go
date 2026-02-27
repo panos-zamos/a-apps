@@ -100,7 +100,8 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 		"Content":        template.HTML(h.homeContent(projects, stageFilter, typeFilter, ratingFilter)),
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
@@ -144,7 +145,7 @@ func (h *Handler) CreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("HX-Redirect", "/")
+	w.Header().Set("HX-Redirect", h.path("/"))
 }
 
 // EditProjectForm returns the edit form for a project
@@ -195,7 +196,7 @@ func (h *Handler) UpdateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("HX-Redirect", fmt.Sprintf("/projects/%d", id))
+	w.Header().Set("HX-Redirect", h.path(fmt.Sprintf("/%d", id)))
 }
 
 // UpdateProjectStage handles inline stage change via HTMX
@@ -227,7 +228,7 @@ func (h *Handler) DeleteProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("HX-Redirect", "/")
+	w.Header().Set("HX-Redirect", h.path("/"))
 }
 
 // ProjectDetail renders a single project detail page
@@ -250,7 +251,8 @@ func (h *Handler) ProjectDetail(w http.ResponseWriter, r *http.Request) {
 		"Content":        template.HTML(h.detailContent(project, logEntries)),
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
@@ -384,8 +386,9 @@ func (h *Handler) ReplyForm(w http.ResponseWriter, r *http.Request) {
 	projectID := chi.URLParam(r, "id")
 	logID := chi.URLParam(r, "logId")
 
+	replyPath := h.path(fmt.Sprintf("/%s/log/%s/reply", projectID, logID))
 	formHTML := fmt.Sprintf(`
-		<form hx-post="/projects/%s/log/%s/reply" hx-target="#timeline" hx-swap="innerHTML" class="mt-sm">
+		<form hx-post="%s" hx-target="#timeline" hx-swap="innerHTML" class="mt-sm">
 			<input type="text" name="note" placeholder="Add a reply..." required>
 			<div class="mt-sm">
 				<input type="text" name="url" placeholder="URL (optional)">
@@ -395,7 +398,7 @@ func (h *Handler) ReplyForm(w http.ResponseWriter, r *http.Request) {
 				<button type="button" onclick="this.closest('form').remove()">Cancel</button>
 			</div>
 		</form>
-	`, projectID, logID)
+	`, replyPath)
 
 	w.Write([]byte(formHTML))
 }
@@ -403,11 +406,13 @@ func (h *Handler) ReplyForm(w http.ResponseWriter, r *http.Request) {
 // --- HTML Rendering ---
 
 func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string, ratingFilter int) string {
-	content := `
+	baseURL := h.path("/")
+	newProjectPath := h.path("/new")
+	content := fmt.Sprintf(`
 		<div class="row space-between mb-md">
-			<button class="btn" hx-get="/projects/new" hx-target="#modal">add project</button>
+			<button class="btn" hx-get="%s" hx-target="#modal">add project</button>
 		</div>
-	`
+	`, newProjectPath)
 
 	// Filters
 	content += `<div class="filter-bar mb-md">`
@@ -417,7 +422,7 @@ func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string
 	if stageFilter == "" && typeFilter == "" && ratingFilter == 0 {
 		activeClass = " active"
 	}
-	content += fmt.Sprintf(`<button class="chip%s" hx-get="/?stage=&type=&rating=" hx-target="#projects-list">all</button>`, activeClass)
+	content += fmt.Sprintf(`<button class="chip%s" hx-get="%s?stage=&type=&rating=" hx-target="#projects-list">all</button>`, activeClass, baseURL)
 
 	// Stage filter
 	for _, s := range Stages {
@@ -425,7 +430,7 @@ func (h *Handler) homeContent(projects []Project, stageFilter, typeFilter string
 		if s == stageFilter {
 			check = " active"
 		}
-		content += fmt.Sprintf(`<button class="chip%s" hx-get="/?stage=%s&type=%s&rating=%d" hx-target="#projects-list">%s</button>`, check, s, typeFilter, ratingFilter, s)
+		content += fmt.Sprintf(`<button class="chip%s" hx-get="%s?stage=%s&type=%s&rating=%d" hx-target="#projects-list">%s</button>`, check, baseURL, s, typeFilter, ratingFilter, s)
 	}
 
 	content += `</div>`
@@ -447,8 +452,9 @@ func (h *Handler) projectCards(projects []Project) string {
 	content := ""
 	for _, p := range projects {
 		flags := projectFlags(p)
+		projectPath := h.path(fmt.Sprintf("/%d", p.ID))
 		content += fmt.Sprintf(`
-			<a href="/projects/%d" class="list-item">
+			<a href="%s" class="list-item">
 				<div class="list-item-top">
 					<span class="item-name">%s</span>
 					<span class="stage %s">%s</span>
@@ -459,7 +465,7 @@ func (h *Handler) projectCards(projects []Project) string {
 					<span class="flags">%s</span>
 				</div>
 			</a>`,
-			p.ID,
+			projectPath,
 			html.EscapeString(p.ShortName),
 			badgeClass(p.Stage), p.Stage,
 			html.EscapeString(p.ShortDescription),
@@ -471,7 +477,7 @@ func (h *Handler) projectCards(projects []Project) string {
 }
 
 func (h *Handler) detailContent(p *Project, logEntries []LogEntry) string {
-	content := `<a href="/" class="back">← back</a>`
+	content := fmt.Sprintf(`<a href="%s" class="back">← back</a>`, h.path("/"))
 
 	// Title + badge
 	content += fmt.Sprintf(`
@@ -516,11 +522,13 @@ func (h *Handler) detailContent(p *Project, logEntries []LogEntry) string {
 	content += `</table>`
 
 	// Action buttons
+	editPath := h.path(fmt.Sprintf("/%d/edit", p.ID))
+	deletePath := h.path(fmt.Sprintf("/%d", p.ID))
 	content += fmt.Sprintf(`
 		<div class="row mb-md">
-			<button class="btn" hx-get="/projects/%d/edit" hx-target="#modal">Edit</button>
-			<button class="btn btn-danger" hx-delete="/projects/%d" hx-confirm="Delete this project and all log entries?">Delete</button>
-		</div>`, p.ID, p.ID)
+			<button class="btn" hx-get="%s" hx-target="#modal">Edit</button>
+			<button class="btn btn-danger" hx-delete="%s" hx-confirm="Delete this project and all log entries?">Delete</button>
+		</div>`, editPath, deletePath)
 
 	// Full description
 	if p.FullDescription != "" {
@@ -530,13 +538,14 @@ func (h *Handler) detailContent(p *Project, logEntries []LogEntry) string {
 	}
 
 	// Timeline section
+	logPath := h.path(fmt.Sprintf("/%d/log", p.ID))
 	content += fmt.Sprintf(`
 		<div class="section-label mb-md">timeline</div>
 		<div class="mb-md">
 			<button class="btn" onclick="document.getElementById('new-entry-form').style.display='block'">Add Entry</button>
 		</div>
 
-		<form id="new-entry-form" hx-post="/projects/%d/log" hx-target="#timeline" hx-swap="innerHTML" class="panel mb-md" hidden>
+		<form id="new-entry-form" hx-post="%s" hx-target="#timeline" hx-swap="innerHTML" class="panel mb-md" hidden>
 			<div class="field">
 				<label>note</label>
 				<input type="text" name="note" placeholder="What happened?" required>
@@ -554,7 +563,7 @@ func (h *Handler) detailContent(p *Project, logEntries []LogEntry) string {
 		<div id="timeline" class="timeline">
 			%s
 		</div>
-	`, p.ID, h.timelineHTML(logEntries, p.ID))
+	`, logPath, h.timelineHTML(logEntries, p.ID))
 
 	content += `<div id="modal" class="mt-lg"></div>`
 	return content
@@ -591,27 +600,30 @@ func (h *Handler) logEntryHTML(e LogEntry, projectID int, isChild bool) string {
 		datePart = datePart[:10]
 	}
 
+	replyPath := h.path(fmt.Sprintf("/%d/log/%d/reply", projectID, e.ID))
+	deletePath := h.path(fmt.Sprintf("/%d/log/%d", projectID, e.ID))
 	content := fmt.Sprintf(`
 		<article class="entry%s">
 			<div class="entry-date">%s</div>
 			<div class="entry-text">%s%s</div>
 			<div class="entry-actions">
-				<button hx-get="/projects/%d/log/%d/reply" hx-target="#reply-%d" hx-swap="innerHTML">reply</button>
-				<button hx-delete="/projects/%d/log/%d" hx-target="#timeline" hx-swap="innerHTML" hx-confirm="Delete this entry?">delete</button>
+				<button hx-get="%s" hx-target="#reply-%d" hx-swap="innerHTML">reply</button>
+				<button hx-delete="%s" hx-target="#timeline" hx-swap="innerHTML" hx-confirm="Delete this entry?">delete</button>
 			</div>
 			<div id="reply-%d"></div>
 		</article>`,
 		nestedClass, datePart,
 		html.EscapeString(e.Note), urlPart,
-		projectID, e.ID, e.ID,
-		projectID, e.ID, e.ID)
+		replyPath, e.ID,
+		deletePath,
+		e.ID)
 
 	return content
 }
 
 func (h *Handler) projectForm(p *Project) string {
 	title := "new project"
-	action := `hx-post="/projects"`
+	action := fmt.Sprintf(`hx-post="%s"`, h.path("/"))
 	shortName := ""
 	shortDesc := ""
 	fullDesc := ""
@@ -625,7 +637,7 @@ func (h *Handler) projectForm(p *Project) string {
 
 	if p != nil {
 		title = "edit project"
-		action = fmt.Sprintf(`hx-put="/projects/%d"`, p.ID)
+		action = fmt.Sprintf(`hx-put="%s"`, h.path(fmt.Sprintf("/%d", p.ID)))
 		shortName = html.EscapeString(p.ShortName)
 		shortDesc = html.EscapeString(p.ShortDescription)
 		fullDesc = html.EscapeString(p.FullDescription)

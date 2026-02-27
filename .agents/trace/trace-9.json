@@ -1,0 +1,43 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Explain deployment env vars for JWT_SECRET and DOMAIN",
+    "author": "user",
+    "started_at": "2026-02-27T18:38:01Z",
+    "ended_at": "2026-02-27T18:38:40Z"
+  },
+  "agents": [
+    {"name": "code_agent", "model": "unknown", "role": "implementation"}
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Asked how to set JWT_SECRET and DOMAIN for docker-compose deployment on a droplet with SSH access.",
+      "timestamp": "2026-02-27T18:38:01Z"
+    },
+    {
+      "step_id": 2,
+      "type": "research",
+      "actor": "agent",
+      "summary": "Reviewed deployment compose and Caddy config plus env example and README instructions. Evidence: deploy/docker-compose.yml, deploy/Caddyfile, deploy/.env.example, README.md.",
+      "timestamp": "2026-02-27T18:38:10Z"
+    },
+    {
+      "step_id": 3,
+      "type": "decision",
+      "actor": "agent",
+      "summary": "Advise setting JWT_SECRET and optional DOMAIN via deploy/.env (or exported env) so compose substitutes values; DOMAIN enables Caddy HTTPS if DNS points to droplet.",
+      "decision": "accepted",
+      "timestamp": "2026-02-27T18:38:30Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": false,
+    "notes": "Not run (advice only)."
+  },
+  "final_summary": "Outlined how to set JWT_SECRET and DOMAIN for docker-compose using deploy/.env or exported vars, and noted DNS/HTTPS behavior for Caddy."
+}

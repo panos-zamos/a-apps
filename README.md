@@ -7,7 +7,7 @@ A monorepo for hosting multiple small web applications with minimal friction. Bu
 - **Stack:** Go + HTMX + SQLite + Docker Compose
 - **Isolation:** Each app is independent with its own database and container
 - **Shared:** Authentication, UI components, deployment configuration
-- **Deployment:** Single Digital Ocean Droplet with nginx reverse proxy
+- **Deployment:** Single Digital Ocean Droplet with Caddy reverse proxy
 
 ## Quick Start
 
@@ -34,43 +34,60 @@ A monorepo for hosting multiple small web applications with minimal friction. Bu
 
 3. **Access:** http://localhost:3005
 
-### Run All Apps with Docker (Local)
+### Run All Apps with Docker Compose (Local)
 
-To run all apps and the Caddy reverse proxy locally:
+From the repo root, run all apps plus the Caddy reverse proxy:
 
 ```bash
-docker-compose -f deploy/docker-compose.yml up --build
+# Optional: provide env vars (JWT_SECRET, DOMAIN, etc.)
+# cp deploy/.env.example .env
+
+docker compose -f deploy/docker-compose.yml up --build
+# or: make up
 ```
 
 Then access your apps at:
 
-- http://localhost/todo
-- http://localhost/projects
+- http://localhost/todo/
+- http://localhost/projects/
+
+The compose file sets `BASE_PATH` for each app so redirects and assets work behind Caddy.
+
+Stop everything with:
+
+```bash
+docker compose -f deploy/docker-compose.yml down
+# or: make down
+```
 
 If you want to use a custom domain (with HTTPS), set the DOMAIN variable:
 
 ```bash
-DOMAIN=yourdomain.com docker-compose -f deploy/docker-compose.yml up --build
+DOMAIN=yourdomain.com docker compose -f deploy/docker-compose.yml up --build
 ```
 
 Caddy will automatically provision HTTPS certificates for real domains.
 
 ### Deployment
 
-1. **Build all apps:**
-   ```bash
-   docker-compose -f deploy/docker-compose.yml build
-   ```
+Set deployment env in `deploy/.env` (copy from `.env.example`). At minimum:
 
-2. **Start services:**
-   ```bash
-   docker-compose -f deploy/docker-compose.yml up -d
-   ```
+- `JWT_SECRET`
+- `REGISTRY` (e.g. `registry.digitalocean.com/your-registry`)
+- `IMAGE_TAG` (e.g. `latest`)
 
-3. **Deploy to Digital Ocean:**
-   ```bash
-   ./scripts/deploy.sh
-   ```
+Then deploy from your local machine (builds + pushes to the registry, then pulls on the droplet):
+
+```bash
+./scripts/deploy.sh
+```
+
+If you want to run directly on the server without the deploy script:
+
+```bash
+docker compose -f deploy/docker-compose.yml pull
+docker compose -f deploy/docker-compose.yml up -d
+```
 
 ## Directory Structure
 
@@ -87,7 +104,7 @@ a-apps/
 │   └── models/             # Common types
 ├── deploy/                  # Deployment configuration
 │   ├── docker-compose.yml  # Production compose file
-│   ├── nginx.conf          # Reverse proxy config
+│   ├── Caddyfile           # Reverse proxy config
 │   └── .env.example        # Environment variables template
 ├── scripts/                 # Automation scripts
 │   ├── new-app.sh          # Scaffold new application
@@ -112,8 +129,8 @@ a-apps/
 2. The script will:
    - Create `apps/expense-tracker/` from template
    - Initialize SQLite database
-   - Add service to docker-compose.yml
-   - Update nginx configuration
+   - Add service to `deploy/docker-compose.yml`
+   - Update `deploy/Caddyfile`
    - Assign port 3002
 
 3. Customize your app:
@@ -163,28 +180,27 @@ See [docs/llm-prompts.md](docs/llm-prompts.md) for effective prompts.
 - **HTMX:** Dynamic UIs without heavy JavaScript frameworks
 - **SQLite:** Perfect for single-user apps, zero configuration, file-based backups
 - **Docker Compose:** Simple orchestration, easy deployment
-- **Nginx:** Reliable reverse proxy, path-based routing
+- **Caddy:** Reverse proxy with automatic HTTPS
 
 ## Deployment Architecture
 
 ```
 ┌─────────────────────────────────────┐
-│     Nginx (Port 80/443)             │
+│     Caddy (Port 80/443)             │
 │  ┌─────────────────────────────┐   │
-│  │ /shopping → localhost:3001   │   │
-│  │ /expenses → localhost:3002   │   │
-│  │ /projects → localhost:3003   │   │
+│  │ /todo → localhost:3001       │   │
+│  │ /projects → localhost:3002   │   │
 │  └─────────────────────────────┘   │
 └─────────────────────────────────────┘
-         │           │          │
-    ┌────▼───┐  ┌───▼────┐ ┌───▼────┐
-    │ App 1  │  │ App 2  │ │ App 3  │
-    │ :3001  │  │ :3002  │ │ :3003  │
-    └────┬───┘  └───┬────┘ └───┬────┘
-         │          │          │
-    ┌────▼───┐  ┌───▼────┐ ┌───▼────┐
-    │ SQLite │  │ SQLite │ │ SQLite │
-    └────────┘  └────────┘ └────────┘
+         │           │
+    ┌────▼───┐  ┌───▼────┐
+    │ App 1  │  │ App 2  │
+    │ :3001  │  │ :3002  │
+    └────┬───┘  └───┬────┘
+         │          │
+    ┌────▼───┐  ┌───▼────┐
+    │ SQLite │  │ SQLite │
+    └────────┘  └────────┘
 ```
 
 ## Future Enhancements

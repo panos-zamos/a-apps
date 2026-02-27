@@ -647,67 +647,61 @@ CMD ["./main"]
 version: '3.8'
 
 services:
-    todo-list:
+  caddy:
+    image: caddy:alpine
+    container_name: a-apps-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+    depends_on:
+      - todo-list
+    restart: unless-stopped
+    networks:
+      - a-apps-network
+
+  todo-list:
+    image: ${REGISTRY:-local}/a-apps-todo-list:${IMAGE_TAG:-latest}
     build:
-            context: ../apps/todo-list
-        container_name: todo-list
+      context: ..
+      dockerfile: apps/todo-list/Dockerfile
+    container_name: a-apps-todo-list
     environment:
       - PORT=3001
       - JWT_SECRET=${JWT_SECRET}
     volumes:
-            - ../apps/todo-list/data:/root/data
+      - ../apps/todo-list/data:/root/data
     restart: unless-stopped
     networks:
-      - apps
-
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-            - todo-list
-    restart: unless-stopped
-    networks:
-      - apps
+      - a-apps-network
 
 networks:
-  apps:
+  a-apps-network:
 ```
 
-### Nginx Config
+### Caddyfile
 
-`deploy/nginx.conf`:
-```nginx
-events {
-    worker_connections 1024;
-}
-
-http {
-    server {
-        listen 80;
-
-        location /todo {
-            rewrite ^/todo/(.*)$ /$1 break;
-            proxy_pass http://todo-list:3001;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-        }
-
-        location / {
-            return 200 "Apps Platform\n";
-        }
-    }
+`deploy/Caddyfile`:
+```caddy
+{$DOMAIN:localhost} {
+  handle_path /todo/* {
+    reverse_proxy todo-list:3001
+  }
+  handle /todo {
+    reverse_proxy todo-list:3001
+  }
 }
 ```
 
 ### Test Locally
 
 ```bash
-cd deploy
-JWT_SECRET=mysecret docker-compose up --build
+JWT_SECRET=mysecret docker compose -f deploy/docker-compose.yml up --build
 ```
 
 Visit http://localhost/todo
@@ -715,29 +709,19 @@ Visit http://localhost/todo
 ### Deploy to Digital Ocean
 
 1. **Create Droplet** ($6/month basic)
-2. **Install Docker**
-3. **rsync your code**
+2. **Install Docker + docker compose plugin**
+3. **Login to registry (once on droplet and local)**
 
 ```bash
-./scripts/deploy.sh
+docker login registry.digitalocean.com
 ```
 
-`scripts/deploy.sh`:
+4. **Deploy from local (builds + pushes, then pulls on droplet)**
+
 ```bash
-#!/bin/bash
-SERVER=root@your-server-ip
-
-rsync -avz --exclude='data' --exclude='.git' ./ $SERVER:/opt/a-apps/
-
-ssh $SERVER << 'EOF'
-cd /opt/a-apps/deploy
-export JWT_SECRET="$(openssl rand -base64 32)"
-docker-compose down
-docker-compose up --build -d
-docker-compose ps
-EOF
-
-echo "✓ Deployed!"
+cp deploy/.env.example deploy/.env
+# set JWT_SECRET, REGISTRY, IMAGE_TAG
+./scripts/deploy.sh
 ```
 
 ## Part 6: Next Steps (ongoing)

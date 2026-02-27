@@ -7,7 +7,7 @@ const BaseHTML = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
-    <link rel="stylesheet" href="/custom.css">
+    <link rel="stylesheet" href="{{.BasePath}}/custom.css">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
@@ -15,7 +15,7 @@ const BaseHTML = `<!DOCTYPE html>
                 <header class="top-bar row space-between" style="align-items: center;">
                         <h1>{{.AppName}}</h1>
                         {{if .Username}}
-                        <form action="/logout" method="POST" style="margin:0;">
+                        <form action="{{.BasePath}}/logout" method="POST" style="margin:0;">
                                 <button type="submit" title="Log out" style="background:none;border:none;padding:0;cursor:pointer;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-power">
                                         <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
@@ -47,7 +47,7 @@ const LoginHTML = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - {{.AppName}}</title>
-    <link rel="stylesheet" href="/custom.css">
+    <link rel="stylesheet" href="{{.BasePath}}/custom.css">
 </head>
 <body>
     <div class="app">
@@ -63,7 +63,7 @@ const LoginHTML = `<!DOCTYPE html>
             </div>
             {{end}}
             <div class="panel">
-                <form action="/login" method="POST">
+                <form action="{{.BasePath}}/login" method="POST">
                     <label for="username">Username</label>
                     <input id="username" name="username" type="text" required>
                     <div class="mt-md">

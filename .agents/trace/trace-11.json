@@ -1,0 +1,57 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Switch deployment to registry-based images",
+    "author": "user",
+    "started_at": "2026-02-27T18:39:30Z",
+    "ended_at": "2026-02-27T18:40:20Z"
+  },
+  "agents": [
+    {"name": "code_agent", "model": "unknown", "role": "implementation"}
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Requested switching deployment to use a DigitalOcean registry since building on the droplet failed; asked to verify compose paths.",
+      "timestamp": "2026-02-27T18:39:30Z"
+    },
+    {
+      "step_id": 2,
+      "type": "research",
+      "actor": "agent",
+      "summary": "Reviewed deploy compose and deploy script for build contexts and commands. Evidence: deploy/docker-compose.yml, scripts/deploy.sh, deploy/.env.example.",
+      "timestamp": "2026-02-27T18:39:40Z"
+    },
+    {
+      "step_id": 3,
+      "type": "decision",
+      "actor": "agent",
+      "summary": "Add image tags to deploy compose and have deploy.sh build/push locally then pull on server using REGISTRY/IMAGE_TAG envs, keeping build context for local builds.",
+      "decision": "accepted",
+      "timestamp": "2026-02-27T18:39:55Z"
+    },
+    {
+      "step_id": 4,
+      "type": "implementation",
+      "actor": "agent",
+      "summary": "Updated deploy compose to include registry image names; deploy script now requires REGISTRY, builds/pushes locally, and pulls on the server; env example updated with registry vars.",
+      "timestamp": "2026-02-27T18:40:10Z"
+    },
+    {
+      "step_id": 5,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Touched: deploy/docker-compose.yml, scripts/deploy.sh, deploy/.env.example.",
+      "timestamp": "2026-02-27T18:40:15Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": false,
+    "notes": "Not run (deployment script/config changes only)."
+  },
+  "final_summary": "Switched deployment flow to build/push images to a registry locally and pull on the droplet using REGISTRY/IMAGE_TAG, updating compose and env template accordingly."
+}

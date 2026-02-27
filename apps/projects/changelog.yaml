@@ -1,3 +1,8 @@
+- version: "0.1.1"
+  date: "2026-02-27"
+  changes:
+    - "Add BASE_PATH-aware routing for reverse proxy subpaths."
+    - "Fix redirects, assets, and HTMX links when hosted under /projects."
 - version: "0.1.0"
   date: "2026-02-27"
   changes:

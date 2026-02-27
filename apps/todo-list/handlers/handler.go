@@ -18,6 +18,27 @@ type Handler struct {
 	Users     []models.UserFromConfig
 	JWTSecret string
 	AppConfig models.AppConfig
+	BasePath  string
+}
+
+func (h *Handler) path(path string) string {
+	if h.BasePath == "" {
+		return path
+	}
+	if path == "" {
+		return h.BasePath
+	}
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	return h.BasePath + path
+}
+
+func (h *Handler) cookiePath() string {
+	if h.BasePath == "" {
+		return "/"
+	}
+	return h.BasePath
 }
 
 // LoginPage renders the login page
@@ -27,7 +48,8 @@ func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 		"AppName":        "todo-list",
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 		"Error":          r.URL.Query().Get("error"),
 	}
 	tmpl.Execute(w, data)
@@ -40,7 +62,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	valid, err := auth.ValidateCredentials(username, password, h.Users)
 	if !valid || err != nil {
-		http.Redirect(w, r, "/login?error=Invalid credentials", http.StatusSeeOther)
+		http.Redirect(w, r, h.path("/login?error=Invalid credentials"), http.StatusSeeOther)
 		return
 	}
 
@@ -55,13 +77,13 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "auth_token",
 		Value:    token,
-		Path:     "/",
+		Path:     h.cookiePath(),
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 		MaxAge:   86400, // 24 hours
 	})
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, h.path("/"), http.StatusSeeOther)
 }
 
 // Logout handles logout
@@ -69,10 +91,10 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:   "auth_token",
 		Value:  "",
-		Path:   "/",
+		Path:   h.cookiePath(),
 		MaxAge: -1,
 	})
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	http.Redirect(w, r, h.path("/login"), http.StatusSeeOther)
 }
 
 // HealthCheck returns OK for health checks
@@ -95,7 +117,8 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 		"Content":        template.HTML(h.homeContent(stores)),
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
@@ -121,7 +144,8 @@ func (h *Handler) ChangelogPage(w http.ResponseWriter, r *http.Request) {
 		"Content":        template.HTML(content),
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
@@ -290,12 +314,12 @@ func toInterfaceSlice(values []string) []interface{} {
 }
 
 func (h *Handler) homeContent(stores []Store) string {
-	content := `
+	content := fmt.Sprintf(`
 		<div class="row space-between mb-md">
 			<h2>lists</h2>
-			<button class="btn" hx-get="/stores/new" hx-target="#modal">+ add list</button>
+			<button class="btn" hx-get="%s" hx-target="#modal">+ add list</button>
 		</div>
-	`
+	`, h.path("/stores/new"))
 
 	content += h.storesGrid(stores)
 	content += `<div id="modal" class="mt-lg"></div>`

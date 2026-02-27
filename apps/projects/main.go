@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -43,6 +44,8 @@ func main() {
 		}
 	}
 
+	basePath := normalizeBasePath(os.Getenv("BASE_PATH"))
+
 	// Open database
 	db, err := database.Open("data/projects.db")
 	if err != nil {
@@ -73,6 +76,7 @@ func main() {
 		Users:     users,
 		JWTSecret: jwtSecret,
 		AppConfig: appConfig,
+		BasePath:  basePath,
 	}
 
 	// Public routes
@@ -85,23 +89,23 @@ func main() {
 
 	// Protected routes
 	r.Group(func(r chi.Router) {
-		r.Use(auth.Middleware(jwtSecret))
+		r.Use(auth.Middleware(jwtSecret, basePath))
 		r.Get("/", h.Home)
 
 		// Project management
-		r.Get("/projects/new", h.NewProjectForm)
-		r.Post("/projects", h.CreateProject)
-		r.Get("/projects/{id}", h.ProjectDetail)
-		r.Get("/projects/{id}/edit", h.EditProjectForm)
-		r.Put("/projects/{id}", h.UpdateProject)
-		r.Put("/projects/{id}/stage", h.UpdateProjectStage)
-		r.Delete("/projects/{id}", h.DeleteProject)
+		r.Get("/new", h.NewProjectForm)
+		r.Post("/", h.CreateProject)
+		r.Get("/{id}", h.ProjectDetail)
+		r.Get("/{id}/edit", h.EditProjectForm)
+		r.Put("/{id}", h.UpdateProject)
+		r.Put("/{id}/stage", h.UpdateProjectStage)
+		r.Delete("/{id}", h.DeleteProject)
 
 		// Log entries
-		r.Post("/projects/{id}/log", h.CreateLogEntry)
-		r.Get("/projects/{id}/log/{logId}/reply", h.ReplyForm)
-		r.Post("/projects/{id}/log/{logId}/reply", h.CreateLogReply)
-		r.Delete("/projects/{id}/log/{logId}", h.DeleteLogEntry)
+		r.Post("/{id}/log", h.CreateLogEntry)
+		r.Get("/{id}/log/{logId}/reply", h.ReplyForm)
+		r.Post("/{id}/log/{logId}/reply", h.CreateLogReply)
+		r.Delete("/{id}/log/{logId}", h.DeleteLogEntry)
 	})
 
 	// Start server
@@ -110,4 +114,15 @@ func main() {
 	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func normalizeBasePath(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" || value == "/" {
+		return ""
+	}
+	if !strings.HasPrefix(value, "/") {
+		value = "/" + value
+	}
+	return strings.TrimRight(value, "/")
 }

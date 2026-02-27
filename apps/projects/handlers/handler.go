@@ -18,6 +18,27 @@ type Handler struct {
 	Users     []models.UserFromConfig
 	JWTSecret string
 	AppConfig models.AppConfig
+	BasePath  string
+}
+
+func (h *Handler) path(path string) string {
+	if h.BasePath == "" {
+		return path
+	}
+	if path == "" {
+		return h.BasePath
+	}
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	return h.BasePath + path
+}
+
+func (h *Handler) cookiePath() string {
+	if h.BasePath == "" {
+		return "/"
+	}
+	return h.BasePath
 }
 
 // Project represents a tracked project
@@ -60,7 +81,8 @@ func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 		"AppName":        "projects",
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 		"Error":          r.URL.Query().Get("error"),
 	}
 	tmpl.Execute(w, data)
@@ -73,7 +95,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	valid, err := auth.ValidateCredentials(username, password, h.Users)
 	if !valid || err != nil {
-		http.Redirect(w, r, "/login?error=Invalid credentials", http.StatusSeeOther)
+		http.Redirect(w, r, h.path("/login?error=Invalid credentials"), http.StatusSeeOther)
 		return
 	}
 
@@ -86,13 +108,13 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "auth_token",
 		Value:    token,
-		Path:     "/",
+		Path:     h.cookiePath(),
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 		MaxAge:   86400,
 	})
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, h.path("/"), http.StatusSeeOther)
 }
 
 // Logout handles logout
@@ -100,10 +122,10 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:   "auth_token",
 		Value:  "",
-		Path:   "/",
+		Path:   h.cookiePath(),
 		MaxAge: -1,
 	})
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	http.Redirect(w, r, h.path("/login"), http.StatusSeeOther)
 }
 
 // HealthCheck returns OK for health checks
@@ -131,7 +153,8 @@ func (h *Handler) ChangelogPage(w http.ResponseWriter, r *http.Request) {
 		"Content":        template.HTML(content),
 		"AppVersion":     h.AppConfig.AppVersion,
 		"AppReleaseDate": h.AppConfig.AppReleaseDate,
-		"ChangelogURL":   "/changelog",
+		"ChangelogURL":   h.path("/changelog"),
+		"BasePath":       h.BasePath,
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))

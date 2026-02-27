@@ -21,14 +21,12 @@ services:
 
   # Example app
   todo-list:
-    image: ${REGISTRY:-local}/a-apps-todo-list:${IMAGE_TAG:-latest}
     build:
-      context: ..
-      dockerfile: apps/todo-list/Dockerfile
+      context: ../apps/todo-list
+      dockerfile: Dockerfile
     container_name: a-apps-todo-list
     environment:
       - PORT=3001
-      - BASE_PATH=/todo
       - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
     volumes:
       - ../apps/todo-list/data:/root/data
@@ -42,14 +40,12 @@ services:
       - a-apps-network
 
   projects:
-    image: ${REGISTRY:-local}/a-apps-projects:${IMAGE_TAG:-latest}
     build:
-      context: ..
-      dockerfile: apps/projects/Dockerfile
+      context: ../apps/projects
+      dockerfile: Dockerfile
     container_name: a-apps-projects
     environment:
       - PORT=3002
-      - BASE_PATH=/projects
       - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
     volumes:
       - ../apps/projects/data:/root/data
