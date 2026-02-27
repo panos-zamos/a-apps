@@ -1,6 +1,15 @@
 {
-  "latest_trace": "trace-18.json",
+  "latest_trace": "trace-19.json",
   "sessions": [
+    {
+      "task": {
+        "id": null,
+        "title": "Switch deploy to registry-pulled images"
+      },
+      "started_at": "2026-02-27T18:38:10Z",
+      "ended_at": "2026-02-27T18:40:30Z",
+      "trace": "trace-19.json"
+    },
     {
       "task": {
         "id": null,

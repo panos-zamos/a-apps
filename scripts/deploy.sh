@@ -36,10 +36,12 @@ echo -e "${YELLOW}Creating backup...${NC}"
 
 # Build and push images to registry
 echo -e "${YELLOW}Building images locally...${NC}"
-docker compose -f deploy/docker-compose.yml build
+docker build -t $REGISTRY/a-apps-todo-list:$IMAGE_TAG -f apps/todo-list/Dockerfile .
+docker build -t $REGISTRY/a-apps-projects:$IMAGE_TAG -f apps/projects/Dockerfile .
 
 echo -e "${YELLOW}Pushing images to registry...${NC}"
-docker compose -f deploy/docker-compose.yml push
+docker push $REGISTRY/a-apps-todo-list:$IMAGE_TAG
+docker push $REGISTRY/a-apps-projects:$IMAGE_TAG
 
 # Sync code to server
 echo -e "${YELLOW}Syncing code to server...${NC}"
@@ -52,6 +54,9 @@ echo -e "${YELLOW}Deploying on server...${NC}"
 ssh $SERVER_USER@$SERVER_HOST << EOF
     cd $SERVER_PATH
     
+    export REGISTRY=$REGISTRY
+    export IMAGE_TAG=$IMAGE_TAG
+
     # Pull latest images
     docker compose -f deploy/docker-compose.yml pull
     

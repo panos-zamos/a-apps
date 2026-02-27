@@ -1,0 +1,57 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Switch deploy to registry-pulled images",
+    "author": "user",
+    "started_at": "2026-02-27T18:38:10Z",
+    "ended_at": "2026-02-27T18:40:30Z"
+  },
+  "agents": [
+    {"name": "code_agent", "model": "unknown", "role": "implementation"}
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Reported droplet compose warning about obsolete version field and pull access denied for local images.",
+      "timestamp": "2026-02-27T18:38:10Z"
+    },
+    {
+      "step_id": 2,
+      "type": "decision",
+      "actor": "agent",
+      "summary": "Set compose to pull from a registry-only workflow (remove build directives and require REGISTRY), so the droplet only pulls small images.",
+      "decision": "accepted",
+      "timestamp": "2026-02-27T18:38:30Z"
+    },
+    {
+      "step_id": 3,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Updated compose config to remove build sections and force registry pulls with pull_policy: always. Touched: deploy/docker-compose.yml.",
+      "timestamp": "2026-02-27T18:38:45Z"
+    },
+    {
+      "step_id": 4,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Requested a workflow to build locally, push to registry, and only pull on the droplet.",
+      "timestamp": "2026-02-27T18:39:10Z"
+    },
+    {
+      "step_id": 5,
+      "type": "implementation",
+      "actor": "agent",
+      "summary": "Updated deploy script to build and push tagged images directly via docker build/push and export REGISTRY/IMAGE_TAG during remote compose runs.",
+      "timestamp": "2026-02-27T18:40:10Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": false,
+    "notes": "No tests run; configuration-only change."
+  },
+  "final_summary": "Updated deploy/docker-compose.yml to remove local build sections and force registry pulls so the droplet only pulls images built/pushed from a laptop."
+}
