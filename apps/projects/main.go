@@ -17,14 +17,30 @@ import (
 
 func main() {
 	// Load configuration
+	appConfig, err := models.LoadAppConfig("config.yaml")
+	if err != nil {
+		log.Printf("Warning: Failed to load config: %v", err)
+		appConfig = models.AppConfig{}
+	}
+	if appConfig.ChangelogPath == "" {
+		appConfig.ChangelogPath = "changelog.yaml"
+	}
+
 	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = appConfig.JWTSecret
+	}
 	if jwtSecret == "" {
 		jwtSecret = "dev-secret-change-in-production"
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3002"
+		if appConfig.Port != 0 {
+			port = fmt.Sprintf("%d", appConfig.Port)
+		} else {
+			port = "3002"
+		}
 	}
 
 	// Open database
@@ -40,9 +56,9 @@ func main() {
 	}
 
 	// Load users from config
-	users, err := auth.LoadUsersFromConfig("config.yaml")
-	if err != nil {
-		log.Printf("Warning: Failed to load users from config: %v", err)
+	users := appConfig.Users
+	if len(users) == 0 {
+		log.Printf("Warning: No users configured in config.yaml")
 		users = []models.UserFromConfig{}
 	}
 
@@ -56,6 +72,7 @@ func main() {
 		DB:        db,
 		Users:     users,
 		JWTSecret: jwtSecret,
+		AppConfig: appConfig,
 	}
 
 	// Public routes
@@ -63,6 +80,7 @@ func main() {
 	r.Post("/login", h.Login)
 	r.Post("/logout", h.Logout)
 	r.Get("/health", h.HealthCheck)
+	r.Get("/changelog", h.ChangelogPage)
 	r.Get("/custom.css", sharedTemplates.CustomCSSHandler())
 
 	// Protected routes

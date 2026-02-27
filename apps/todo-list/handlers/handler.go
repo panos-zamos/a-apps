@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	"github.com/panos-zamos/a-apps/shared/auth"
 	"github.com/panos-zamos/a-apps/shared/database"
@@ -15,14 +17,18 @@ type Handler struct {
 	DB        *database.DB
 	Users     []models.UserFromConfig
 	JWTSecret string
+	AppConfig models.AppConfig
 }
 
 // LoginPage renders the login page
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.New("login").Parse(sharedTemplates.LoginHTML))
 	data := map[string]interface{}{
-		"AppName": "todo-list",
-		"Error":   r.URL.Query().Get("error"),
+		"AppName":        "todo-list",
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
+		"Error":          r.URL.Query().Get("error"),
 	}
 	tmpl.Execute(w, data)
 }
@@ -83,14 +89,84 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	stores, _ := h.getStores(username)
 
 	data := map[string]interface{}{
-		"Title":    "Todo List",
-		"AppName":  "Todo List",
-		"Username": username,
-		"Content":  template.HTML(h.homeContent(stores)),
+		"Title":          "Todo List",
+		"AppName":        "Todo List",
+		"Username":       username,
+		"Content":        template.HTML(h.homeContent(stores)),
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
 	tmpl.Execute(w, data)
+}
+
+// ChangelogPage renders the changelog page.
+func (h *Handler) ChangelogPage(w http.ResponseWriter, r *http.Request) {
+	username, _ := auth.GetUsername(r)
+	entries, err := models.LoadChangelog(h.changelogPath())
+
+	content := ""
+	if err != nil {
+		content = `<div class="panel"><p class="muted">Changelog unavailable.</p></div>`
+	} else {
+		content = h.changelogContent(entries)
+	}
+
+	data := map[string]interface{}{
+		"Title":          "Changelog",
+		"AppName":        "Todo List",
+		"Username":       username,
+		"Content":        template.HTML(content),
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
+	}
+
+	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
+	tmpl.Execute(w, data)
+}
+
+func (h *Handler) changelogPath() string {
+	if h.AppConfig.ChangelogPath != "" {
+		return h.AppConfig.ChangelogPath
+	}
+	return "changelog.yaml"
+}
+
+func (h *Handler) changelogContent(entries []models.ChangelogEntry) string {
+	if len(entries) == 0 {
+		return `<div class="panel"><p class="muted">No changelog entries yet.</p></div>`
+	}
+
+	var builder strings.Builder
+	builder.WriteString(`<h2 class="mb-md">changelog</h2>`)
+
+	for _, entry := range entries {
+		version := template.HTMLEscapeString(entry.Version)
+		date := template.HTMLEscapeString(entry.Date)
+
+		builder.WriteString(`<section class="panel mb-md">`)
+		if version != "" {
+			builder.WriteString(fmt.Sprintf("<h3>v%s</h3>", version))
+		} else {
+			builder.WriteString("<h3>Unversioned</h3>")
+		}
+		if date != "" {
+			builder.WriteString(fmt.Sprintf("<p class=\"muted\">%s</p>", date))
+		}
+		if len(entry.Changes) > 0 {
+			builder.WriteString(`<ul class="mt-sm">`)
+			for _, change := range entry.Changes {
+				builder.WriteString(fmt.Sprintf("<li>%s</li>", template.HTMLEscapeString(change)))
+			}
+			builder.WriteString("</ul>")
+		}
+		builder.WriteString("</section>")
+	}
+
+	return builder.String()
 }
 
 type Store struct {
@@ -105,14 +181,17 @@ type Item struct {
 	Name     string
 	Quantity string
 	Checked  bool
+	Username string
 }
 
 func (h *Handler) getStores(username string) ([]Store, error) {
-	rows, err := h.DB.Query(`
+	sharedUsers := h.sharedUsernames(username)
+	query := fmt.Sprintf(`
 		SELECT id, name, color FROM stores 
-		WHERE username = ? 
+		WHERE username IN (%s) 
 		ORDER BY name
-	`, username)
+	`, buildPlaceholders(len(sharedUsers)))
+	rows, err := h.DB.Query(query, toInterfaceSlice(sharedUsers)...)
 	if err != nil {
 		return nil, err
 	}
@@ -126,20 +205,20 @@ func (h *Handler) getStores(username string) ([]Store, error) {
 		}
 
 		// Get items for this store
-		s.Items, _ = h.getItems(s.ID, username)
+		s.Items, _ = h.getItems(s.ID)
 		stores = append(stores, s)
 	}
 
 	return stores, nil
 }
 
-func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
+func (h *Handler) getItems(storeID int) ([]Item, error) {
 	rows, err := h.DB.Query(`
-		SELECT id, name, quantity, checked 
+		SELECT id, name, quantity, checked, username 
 		FROM items 
-		WHERE store_id = ? AND username = ? 
+		WHERE store_id = ? 
 		ORDER BY checked ASC, created_at DESC
-	`, storeID, username)
+	`, storeID)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +228,7 @@ func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
 	for rows.Next() {
 		var item Item
 		var checked bool
-		if err := rows.Scan(&item.ID, &item.Name, &item.Quantity, &checked); err != nil {
+		if err := rows.Scan(&item.ID, &item.Name, &item.Quantity, &checked, &item.Username); err != nil {
 			continue
 		}
 		item.Checked = checked
@@ -157,6 +236,57 @@ func (h *Handler) getItems(storeID int, username string) ([]Item, error) {
 	}
 
 	return items, nil
+}
+
+func (h *Handler) sharedUsernames(username string) []string {
+	if username == "" {
+		return []string{""}
+	}
+
+	group := ""
+	for _, user := range h.Users {
+		if user.Username == username {
+			group = user.ShareGroup
+			break
+		}
+	}
+
+	if group == "" {
+		return []string{username}
+	}
+
+	shared := make([]string, 0, len(h.Users))
+	for _, user := range h.Users {
+		if user.ShareGroup == group {
+			shared = append(shared, user.Username)
+		}
+	}
+
+	if len(shared) == 0 {
+		return []string{username}
+	}
+
+	return shared
+}
+
+func buildPlaceholders(count int) string {
+	if count <= 0 {
+		return "?"
+	}
+
+	placeholders := make([]string, count)
+	for i := range placeholders {
+		placeholders[i] = "?"
+	}
+	return strings.Join(placeholders, ",")
+}
+
+func toInterfaceSlice(values []string) []interface{} {
+	args := make([]interface{}, len(values))
+	for i, value := range values {
+		args[i] = value
+	}
+	return args
 }
 
 func (h *Handler) homeContent(stores []Store) string {

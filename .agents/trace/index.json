@@ -1,5 +1,5 @@
 {
-  "latest_trace": "trace-5.json",
+  "latest_trace": "trace-8.json",
   "sessions": [
     {
       "task": {
@@ -45,6 +45,33 @@
       "started_at": "2026-02-23T20:36:00Z",
       "ended_at": "2026-02-23T20:37:40Z",
       "trace": "trace-5.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Share todo lists between configured users"
+      },
+      "started_at": "2026-02-27T18:38:00Z",
+      "ended_at": null,
+      "trace": "trace-6.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Explain live reload options for development"
+      },
+      "started_at": "2026-02-27T18:38:01Z",
+      "ended_at": null,
+      "trace": "trace-7.json"
+    },
+    {
+      "task": {
+        "id": null,
+        "title": "Add app version metadata and in-app changelog display"
+      },
+      "started_at": "2026-02-27T18:50:00Z",
+      "ended_at": null,
+      "trace": "trace-8.json"
     }
   ]
 }

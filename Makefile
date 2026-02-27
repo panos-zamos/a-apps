@@ -11,7 +11,7 @@ help: ## Show this help message
 
 install-tools: ## Install development tools
 	@echo "$(GREEN)Installing development tools...$(RESET)"
-	go install github.com/cosmtrek/air@latest
+	go install github.com/air-verse/air@v1.62.0
 	@echo "$(GREEN)Tools installed!$(RESET)"
 
 dev-%: ## Run specific app in development mode (e.g., make dev-grocery-list)

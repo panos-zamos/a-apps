@@ -15,4 +15,5 @@ type User struct {
 type UserFromConfig struct {
 	Username     string `yaml:"username"`
 	PasswordHash string `yaml:"password_hash"`
+	ShareGroup   string `yaml:"share_group"`
 }

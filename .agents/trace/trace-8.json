@@ -1,0 +1,57 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Add app version metadata and in-app changelog display",
+    "author": "user",
+    "started_at": "2026-02-27T18:50:00Z",
+    "ended_at": "2026-02-27T19:15:00Z"
+  },
+  "agents": [
+    {"name": "code_agent", "model": "unknown", "role": "implementation"}
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Requested app version display (version number/date) and a changelog that can be shown in the app.",
+      "timestamp": "2026-02-27T18:50:00Z"
+    },
+    {
+      "step_id": 2,
+      "type": "research",
+      "actor": "agent",
+      "summary": "Reviewed shared templates and app handlers to see how base pages are rendered and where to inject version/changelog info. Evidence: shared/templates/base.go, apps/*/handlers/*.go.",
+      "timestamp": "2026-02-27T18:52:00Z"
+    },
+    {
+      "step_id": 3,
+      "type": "decision",
+      "actor": "agent",
+      "summary": "Use config.yaml for version metadata and a per-app changelog.yaml parsed into a simple list, displayed via a new /changelog route. Chose YAML for easy agent updates without adding markdown rendering.",
+      "decision": "accepted",
+      "timestamp": "2026-02-27T18:55:00Z"
+    },
+    {
+      "step_id": 4,
+      "type": "implementation",
+      "actor": "agent",
+      "summary": "Added config/changelog loaders in shared/models, footer display in shared templates, and per-app changelog routes/data injection.",
+      "timestamp": "2026-02-27T19:05:00Z"
+    },
+    {
+      "step_id": 5,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Updated app configs with version metadata and added changelog.yaml files; updated app template files to scaffold version/changelog support. Touched: shared/models/*, shared/templates/base.go, shared/templates/custom.css, apps/todo-list/*, apps/projects/*, templates/app-template/*.",
+      "timestamp": "2026-02-27T19:10:00Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": false,
+    "notes": "Not run (not requested)."
+  },
+  "final_summary": "Added version metadata and changelog support via config/changelog YAML, updated shared templates to show version/footer link, and introduced /changelog pages plus scaffolding updates for new apps."
+}

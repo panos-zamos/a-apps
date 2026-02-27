@@ -53,7 +53,7 @@ func TestHomeRendersSavedItems(t *testing.T) {
 
 	h := &Handler{DB: db, Users: nil, JWTSecret: "test"}
 
-	items, err := h.getItems(int(storeID), username)
+	items, err := h.getItems(int(storeID))
 	if err != nil {
 		t.Fatalf("get items: %v", err)
 	}

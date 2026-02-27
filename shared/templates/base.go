@@ -28,6 +28,14 @@ const BaseHTML = `<!DOCTYPE html>
         <main class="content">
             {{.Content}}
         </main>
+        {{if .AppVersion}}
+        <footer class="app-footer">
+            <span>Version {{.AppVersion}}{{if .AppReleaseDate}} • {{.AppReleaseDate}}{{end}}</span>
+            {{if .ChangelogURL}}
+            <a href="{{.ChangelogURL}}">Changelog</a>
+            {{end}}
+        </footer>
+        {{end}}
     </div>
 </body>
 </html>`
@@ -68,6 +76,14 @@ const LoginHTML = `<!DOCTYPE html>
                 </form>
             </div>
         </main>
+        {{if .AppVersion}}
+        <footer class="app-footer">
+            <span>Version {{.AppVersion}}{{if .AppReleaseDate}} • {{.AppReleaseDate}}{{end}}</span>
+            {{if .ChangelogURL}}
+            <a href="{{.ChangelogURL}}">Changelog</a>
+            {{end}}
+        </footer>
+        {{end}}
     </div>
 </body>
 </html>`

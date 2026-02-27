@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	"github.com/panos-zamos/a-apps/shared/auth"
 	"github.com/panos-zamos/a-apps/shared/database"
@@ -15,6 +17,7 @@ type Handler struct {
 	DB        *database.DB
 	Users     []models.UserFromConfig
 	JWTSecret string
+	AppConfig models.AppConfig
 }
 
 // Project represents a tracked project
@@ -54,8 +57,11 @@ var Stages = []string{"idea", "planning", "development", "released", "archived"}
 func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.New("login").Parse(sharedTemplates.LoginHTML))
 	data := map[string]interface{}{
-		"AppName": "projects",
-		"Error":   r.URL.Query().Get("error"),
+		"AppName":        "projects",
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
+		"Error":          r.URL.Query().Get("error"),
 	}
 	tmpl.Execute(w, data)
 }
@@ -104,4 +110,71 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))
+}
+
+// ChangelogPage renders the changelog page.
+func (h *Handler) ChangelogPage(w http.ResponseWriter, r *http.Request) {
+	username, _ := auth.GetUsername(r)
+	entries, err := models.LoadChangelog(h.changelogPath())
+
+	content := ""
+	if err != nil {
+		content = `<div class="panel"><p class="muted">Changelog unavailable.</p></div>`
+	} else {
+		content = h.changelogContent(entries)
+	}
+
+	data := map[string]interface{}{
+		"Title":          "Changelog",
+		"AppName":        "Projects",
+		"Username":       username,
+		"Content":        template.HTML(content),
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
+	}
+
+	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
+	tmpl.Execute(w, data)
+}
+
+func (h *Handler) changelogPath() string {
+	if h.AppConfig.ChangelogPath != "" {
+		return h.AppConfig.ChangelogPath
+	}
+	return "changelog.yaml"
+}
+
+func (h *Handler) changelogContent(entries []models.ChangelogEntry) string {
+	if len(entries) == 0 {
+		return `<div class="panel"><p class="muted">No changelog entries yet.</p></div>`
+	}
+
+	var builder strings.Builder
+	builder.WriteString(`<h2 class="mb-md">changelog</h2>`)
+
+	for _, entry := range entries {
+		version := template.HTMLEscapeString(entry.Version)
+		date := template.HTMLEscapeString(entry.Date)
+
+		builder.WriteString(`<section class="panel mb-md">`)
+		if version != "" {
+			builder.WriteString(fmt.Sprintf("<h3>v%s</h3>", version))
+		} else {
+			builder.WriteString("<h3>Unversioned</h3>")
+		}
+		if date != "" {
+			builder.WriteString(fmt.Sprintf("<p class=\"muted\">%s</p>", date))
+		}
+		if len(entry.Changes) > 0 {
+			builder.WriteString(`<ul class="mt-sm">`)
+			for _, change := range entry.Changes {
+				builder.WriteString(fmt.Sprintf("<li>%s</li>", template.HTMLEscapeString(change)))
+			}
+			builder.WriteString("</ul>")
+		}
+		builder.WriteString("</section>")
+	}
+
+	return builder.String()
 }

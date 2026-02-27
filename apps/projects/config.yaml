@@ -1,4 +1,7 @@
 app_name: "projects"
+app_version: "0.1.0"
+app_release_date: "2026-02-27"
+changelog_path: "changelog.yaml"
 port: 3002
 database_url: "data/projects.db"
 

@@ -19,6 +19,7 @@ Edit `config.yaml` to add users:
 users:
   - username: yourname
     password_hash: $2a$10$...  # Generate with ../../scripts/hash-password.sh
+    share_group: household      # Optional: users with same group share lists
 ```
 
 ## Building

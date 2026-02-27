@@ -94,10 +94,13 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"Title":    "Projects",
-		"AppName":  "Projects",
-		"Username": username,
-		"Content":  template.HTML(h.homeContent(projects, stageFilter, typeFilter, ratingFilter)),
+		"Title":          "Projects",
+		"AppName":        "Projects",
+		"Username":       username,
+		"Content":        template.HTML(h.homeContent(projects, stageFilter, typeFilter, ratingFilter)),
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))
@@ -241,10 +244,13 @@ func (h *Handler) ProjectDetail(w http.ResponseWriter, r *http.Request) {
 	logEntries, _ := h.getLogEntries(id, username)
 
 	data := map[string]interface{}{
-		"Title":    project.ShortName,
-		"AppName":  "Projects",
-		"Username": username,
-		"Content":  template.HTML(h.detailContent(project, logEntries)),
+		"Title":          project.ShortName,
+		"AppName":        "Projects",
+		"Username":       username,
+		"Content":        template.HTML(h.detailContent(project, logEntries)),
+		"AppVersion":     h.AppConfig.AppVersion,
+		"AppReleaseDate": h.AppConfig.AppReleaseDate,
+		"ChangelogURL":   "/changelog",
 	}
 
 	tmpl := template.Must(template.New("base").Parse(sharedTemplates.BaseHTML))

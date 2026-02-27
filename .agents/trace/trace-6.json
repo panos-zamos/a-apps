@@ -1,0 +1,28 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Share todo lists between configured users",
+    "author": "user",
+    "started_at": "2026-02-27T18:38:00Z",
+    "ended_at": null
+  },
+  "agents": [
+    {"name": "code_agent", "model": "unknown", "role": "implementation"}
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Request: update todo-list config and app logic so lists are shared among configured users and show a user indicator to the right of each list item.",
+      "timestamp": "2026-02-27T18:38:00Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": false,
+    "notes": "Not run yet."
+  },
+  "final_summary": ""
+}

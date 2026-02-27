@@ -1,0 +1,4 @@
+- version: "0.1.0"
+  date: "2026-02-27"
+  changes:
+    - "Introduce app version metadata and in-app changelog view."

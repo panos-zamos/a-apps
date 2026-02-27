@@ -1,4 +1,7 @@
 app_name: "todo-list"
+app_version: "0.1.0"
+app_release_date: "2026-02-27"
+changelog_path: "changelog.yaml"
 port: 3001
 database_url: "data/todo-list.db"
 
@@ -6,7 +9,11 @@ database_url: "data/todo-list.db"
 # Generate password hashes with: ./scripts/hash-password.sh yourpassword
 users:
   - username: panos
-    password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2"  # password: demo123
+    #password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2" # demo123
+    password_hash: "$2b$12$3EQqEe8TiReZ6.YRu36Y5eAMQsZJAQIzu9yE2FcMmfH1MMhYU7HVO" # sfij983nfLKJ^n%
+    share_group: household
 #    password_hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy"  # password: demo123
   - username: lili
-    password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2"  # password: demo123
+    password_hash: "$2b$12$3EQqEe8TiReZ6.YRu36Y5eAMQsZJAQIzu9yE2FcMmfH1MMhYU7HVO" # sfij983nfLKJ^n%
+#    password_hash: "$2b$12$SJwOR.koPx3NT.PBx12OoeicGHnx2S5WmlRkcJJ5k2Gu33g1M4wM2"  # password: demo123
+    share_group: household

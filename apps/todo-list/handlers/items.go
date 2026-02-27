@@ -41,11 +41,14 @@ func (h *Handler) CreateStore(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DeleteStore(w http.ResponseWriter, r *http.Request) {
 	username, _ := auth.GetUsername(r)
 	storeID := chi.URLParam(r, "id")
+	sharedUsers := h.sharedUsernames(username)
 
-	_, err := h.DB.Exec(`
+	query := fmt.Sprintf(`
 		DELETE FROM stores 
-		WHERE id = ? AND username = ?
-	`, storeID, username)
+		WHERE id = ? AND username IN (%s)
+	`, buildPlaceholders(len(sharedUsers)))
+	args := append([]interface{}{storeID}, toInterfaceSlice(sharedUsers)...)
+	_, err := h.DB.Exec(query, args...)
 
 	if err != nil {
 		http.Error(w, "Failed to delete store", http.StatusInternalServerError)
@@ -87,9 +90,20 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 	storeID := chi.URLParam(r, "storeID")
 	name := r.FormValue("name")
 	quantity := r.FormValue("quantity")
+	sharedUsers := h.sharedUsernames(username)
 
 	if name == "" {
 		http.Error(w, "Item name required", http.StatusBadRequest)
+		return
+	}
+
+	allowed, err := h.storeAccessible(storeID, sharedUsers)
+	if err != nil {
+		http.Error(w, "Failed to check store access", http.StatusInternalServerError)
+		return
+	}
+	if !allowed {
+		http.Error(w, "Store not found", http.StatusNotFound)
 		return
 	}
 
@@ -113,9 +127,12 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 				<span>%s</span>
 				<span class="muted">%s</span>
 			</div>
-			<button class="danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+			<div class="row">
+				<span class="muted">@%s</span>
+				<button class="btn btn-danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+			</div>
 		</div>
-	`, itemID, name, quantity, itemID)
+	`, itemID, name, quantity, username, itemID)
 
 	w.Write([]byte(html))
 }
@@ -124,13 +141,16 @@ func (h *Handler) CreateItem(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 	username, _ := auth.GetUsername(r)
 	itemID := chi.URLParam(r, "id")
+	sharedUsers := h.sharedUsernames(username)
 
 	// Toggle the checked status
-	_, err := h.DB.Exec(`
+	updateQuery := fmt.Sprintf(`
 		UPDATE items 
 		SET checked = NOT checked 
-		WHERE id = ? AND username = ?
-	`, itemID, username)
+		WHERE id = ? AND store_id IN (SELECT id FROM stores WHERE username IN (%s))
+	`, buildPlaceholders(len(sharedUsers)))
+	updateArgs := append([]interface{}{itemID}, toInterfaceSlice(sharedUsers)...)
+	_, err := h.DB.Exec(updateQuery, updateArgs...)
 
 	if err != nil {
 		http.Error(w, "Failed to toggle item", http.StatusInternalServerError)
@@ -138,13 +158,15 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get updated item
-	var name, quantity string
+	var name, quantity, itemUsername string
 	var checked bool
-	err = h.DB.QueryRow(`
-		SELECT name, quantity, checked 
+	selectQuery := fmt.Sprintf(`
+		SELECT name, quantity, checked, username 
 		FROM items 
-		WHERE id = ?
-	`, itemID).Scan(&name, &quantity, &checked)
+		WHERE id = ? AND store_id IN (SELECT id FROM stores WHERE username IN (%s))
+	`, buildPlaceholders(len(sharedUsers)))
+	selectArgs := append([]interface{}{itemID}, toInterfaceSlice(sharedUsers)...)
+	err = h.DB.QueryRow(selectQuery, selectArgs...).Scan(&name, &quantity, &checked, &itemUsername)
 
 	if err != nil {
 		http.Error(w, "Item not found", http.StatusNotFound)
@@ -168,9 +190,12 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 				<span>%s</span>
 				<span class="muted">%s</span>
 			</div>
-			<button class="danger" hx-delete="/items/%s" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+			<div class="row">
+				<span class="muted">@%s</span>
+				<button class="btn btn-danger" hx-delete="/items/%s" hx-target="closest .space-between" hx-swap="outerHTML">Remove</button>
+			</div>
 		</div>
-	`, checkedAttr, itemID, itemName, itemQuantity, itemID)
+	`, checkedAttr, itemID, itemName, itemQuantity, itemUsername, itemID)
 
 	w.Write([]byte(html))
 }
@@ -179,11 +204,14 @@ func (h *Handler) ToggleItem(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 	username, _ := auth.GetUsername(r)
 	itemID := chi.URLParam(r, "id")
+	sharedUsers := h.sharedUsernames(username)
 
-	_, err := h.DB.Exec(`
+	query := fmt.Sprintf(`
 		DELETE FROM items 
-		WHERE id = ? AND username = ?
-	`, itemID, username)
+		WHERE id = ? AND store_id IN (SELECT id FROM stores WHERE username IN (%s))
+	`, buildPlaceholders(len(sharedUsers)))
+	args := append([]interface{}{itemID}, toInterfaceSlice(sharedUsers)...)
+	_, err := h.DB.Exec(query, args...)
 
 	if err != nil {
 		http.Error(w, "Failed to delete item", http.StatusInternalServerError)
@@ -192,6 +220,19 @@ func (h *Handler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 
 	// Return empty (item will be removed from DOM)
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *Handler) storeAccessible(storeID string, sharedUsers []string) (bool, error) {
+	query := fmt.Sprintf(`
+		SELECT COUNT(*) FROM stores
+		WHERE id = ? AND username IN (%s)
+	`, buildPlaceholders(len(sharedUsers)))
+	args := append([]interface{}{storeID}, toInterfaceSlice(sharedUsers)...)
+	var count int
+	if err := h.DB.QueryRow(query, args...).Scan(&count); err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
 
 func (h *Handler) storesGrid(stores []Store) string {
@@ -242,9 +283,12 @@ func (h *Handler) storesGrid(stores []Store) string {
 						<span>%s</span>
 						<span class="muted">%s</span>
 					</div>
-					<button class="btn btn-danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">remove</button>
+					<div class="row">
+						<span class="muted">@%s</span>
+						<button class="btn btn-danger" hx-delete="/items/%d" hx-target="closest .space-between" hx-swap="outerHTML">remove</button>
+					</div>
 				</div>
-			`, checkedAttr, item.ID, itemName, itemQuantity, item.ID)
+			`, checkedAttr, item.ID, itemName, itemQuantity, item.Username, item.ID)
 		}
 
 		content += fmt.Sprintf(`
