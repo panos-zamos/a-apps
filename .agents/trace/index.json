@@ -4,7 +4,7 @@
     {
       "task": {
         "id": null,
-        "title": "Investigate ERR_SSL_PROTOCOL_ERROR for holisticagency.com"
+        "title": "Rework deployment to simple pull-only droplet flow"
       },
       "started_at": "2026-02-27T18:38:01Z",
       "ended_at": null,

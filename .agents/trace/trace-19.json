@@ -2,7 +2,7 @@
   "trace_version": "1.0",
   "task": {
     "id": null,
-    "title": "Investigate ERR_SSL_PROTOCOL_ERROR for holisticagency.com",
+    "title": "Rework deployment to simple pull-only droplet flow",
     "author": "user",
     "started_at": "2026-02-27T18:38:01Z",
     "ended_at": null
@@ -15,56 +15,65 @@
       "step_id": 1,
       "type": "prompt",
       "actor": "human",
-      "summary": "User reports browser error: holisticagency.com sent an invalid response (ERR_SSL_PROTOCOL_ERROR).",
+      "summary": "User reported ERR_SSL_PROTOCOL_ERROR for holisticagency.com; investigation pointed to DOMAIN defaulting to localhost. Later user accepted proposal to simplify deployment: droplet pull-only, explicit deploy/.env, separate publish vs deploy, no inferred defaults.",
       "timestamp": "2026-02-27T18:38:01Z"
     },
     {
       "step_id": 2,
-      "type": "research",
+      "type": "decision",
       "actor": "agent",
-      "summary": "Inspected deploy/docker-compose.yml and deploy/Caddyfile. Caddyfile uses {$DOMAIN:localhost}; compose sets DOMAIN=${DOMAIN:-localhost}. If DOMAIN isn't set to holisticagency.com, Caddy only configures HTTPS for localhost, which can cause TLS handshake failure for SNI holisticagency.com (no certificate available).",
-      "timestamp": "2026-02-27T18:40:10Z",
+      "summary": "Adopt a droplet-first deployment model: build/push images on laptop/CI, deploy on droplet by running docker compose from deploy/ (implicit .env), and remove defaults in compose/Caddy config to fail fast when DOMAIN/IMAGE_TAG/JWT_SECRET are missing.",
+      "decision": "accepted",
+      "timestamp": "2026-02-27T19:20:00Z",
+      "evidence": [
+        "docs/deployment-rework-proposal.md"
+      ]
+    },
+    {
+      "step_id": 3,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Implemented simplified scripts: scripts/deploy-local.sh (droplet pull+up with env sanity checks) and scripts/publish-images.sh (build+push). Reduced scripts/deploy.sh to a thin wrapper that runs deploy-local.",
+      "timestamp": "2026-02-27T19:25:00Z",
+      "evidence": [
+        "scripts/deploy.sh",
+        "scripts/deploy-local.sh",
+        "scripts/publish-images.sh"
+      ]
+    },
+    {
+      "step_id": 4,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Removed implicit defaults from deploy/docker-compose.yml and deploy/Caddyfile (DOMAIN/IMAGE_TAG/JWT_SECRET) so misconfiguration fails early instead of silently using localhost/latest/change-this-in-production.",
+      "timestamp": "2026-02-27T19:27:00Z",
       "evidence": [
         "deploy/docker-compose.yml",
         "deploy/Caddyfile"
       ]
     },
     {
-      "step_id": 3,
-      "type": "decision",
-      "actor": "agent",
-      "summary": "Primary fix: set DOMAIN=holisticagency.com for the caddy service (via deploy/.env) and restart Caddy so it can obtain a publicly-trusted ACME cert. Also verify inbound 80/443 reach the droplet for ACME validation.",
-      "decision": "accepted",
-      "timestamp": "2026-02-27T18:41:00Z"
-    },
-    {
-      "step_id": 4,
-      "type": "artifact",
-      "actor": "agent",
-      "summary": "Reworked scripts/deploy.sh for robust local (on-droplet) and remote (from laptop) deploys. Local mode reads deploy/.env, performs sanity checks (DOMAIN/REGISTRY/JWT_SECRET and optional registry creds), logs into registry, then compose pull/up. Remote mode reads REGISTRY/IMAGE_TAG from the droplet's deploy/.env to prevent mismatches, builds+pushes images locally, rsyncs code without secrets (excluding deploy/.env), and runs compose on the server using --env-file deploy/.env. Added docker/compose presence checks.",
-      "timestamp": "2026-02-27T18:58:00Z",
-      "evidence": [
-        "scripts/deploy.sh"
-      ]
-    },
-    {
       "step_id": 5,
       "type": "artifact",
       "actor": "agent",
-      "summary": "Added deploy/.env.example (required variables and rationale) and docs/deployment.md with step-by-step droplet setup, manual compose commands, deploy script usage (local/remote), and TLS troubleshooting.",
-      "timestamp": "2026-02-27T18:59:00Z",
+      "summary": "Updated deploy/.env.example to be a minimal deployment contract (DOMAIN/REGISTRY/IMAGE_TAG/JWT_SECRET) and rewrote docs to match the pull-only flow; added docs/publishing.md and simplified docs/deployment.md. Updated README to run compose from deploy/ (implicit .env) and reflect the new workflow.",
+      "timestamp": "2026-02-27T19:30:00Z",
       "evidence": [
         "deploy/.env.example",
-        "docs/deployment.md"
+        "docs/deployment.md",
+        "docs/publishing.md",
+        "README.md"
       ]
     },
     {
       "step_id": 6,
       "type": "artifact",
       "actor": "agent",
-      "summary": "Updated README deployment instructions to use deploy/.env + --env-file, and linked to docs/deployment.md.",
-      "timestamp": "2026-02-27T19:00:00Z",
+      "summary": "Added docs/ops-checklist.md with a concise first-time deploy checklist and linked it from docs/deployment.md and README.",
+      "timestamp": "2026-02-27T19:40:00Z",
       "evidence": [
+        "docs/ops-checklist.md",
+        "docs/deployment.md",
         "README.md"
       ]
     }
@@ -72,7 +81,7 @@
   "evaluations": {
     "tests_run": false,
     "lint_passed": false,
-    "notes": "bash -n scripts/deploy.sh passed; no automated tests run."
+    "notes": "bash -n scripts/deploy.sh scripts/deploy-local.sh scripts/publish-images.sh passed. No automated tests run."
   },
-  "final_summary": null
+  "final_summary": "Simplified deployment to an idiomatic pull-only droplet flow: explicit deploy/.env contract, compose executed from deploy/ (implicit .env), separate publish vs deploy scripts, and removed risky defaults that caused TLS misconfiguration."
 }

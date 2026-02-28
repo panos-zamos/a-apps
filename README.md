@@ -44,8 +44,10 @@ From the repo root:
 cp deploy/.env.example deploy/.env
 # edit deploy/.env (DOMAIN, REGISTRY, IMAGE_TAG, JWT_SECRET, ...)
 
-docker compose --env-file deploy/.env -f deploy/docker-compose.yml pull
-docker compose --env-file deploy/.env -f deploy/docker-compose.yml up -d --remove-orphans
+cd deploy
+# compose reads ./deploy/.env automatically
+docker compose pull
+docker compose up -d --remove-orphans
 ```
 
 Then access your apps at:
@@ -58,24 +60,27 @@ The compose file sets `BASE_PATH` for each app so redirects and assets work behi
 Stop everything with:
 
 ```bash
-docker compose --env-file deploy/.env -f deploy/docker-compose.yml down
+cd deploy
+docker compose down
 ```
 
 Caddy will automatically provision HTTPS certificates for real domains as long as `DOMAIN` in `deploy/.env` is set to the public hostname and ports 80/443 are reachable.
 
 ### Deployment
 
-See **docs/deployment.md** for the step-by-step droplet setup.
+See **docs/deployment.md** for the step-by-step droplet setup (and **docs/ops-checklist.md** for a quick ops checklist).
 
-At a minimum you must create `deploy/.env` on the droplet (copy from `deploy/.env.example`) and set:
-- `DOMAIN`
-- `REGISTRY`
-- `IMAGE_TAG`
-- `JWT_SECRET`
+This repo is designed for a **pull-only droplet**:
+- publish images (build + push) from your laptop/CI (see **docs/publishing.md**)
+- deploy on the droplet by pulling and restarting containers
 
-Then:
-- Run `./scripts/deploy.sh` **on the droplet** to pull + restart containers, or
-- Run `./scripts/deploy.sh` **from your laptop** (remote mode) to build+push images, sync code, then restart containers on the droplet.
+On the droplet, create `deploy/.env` (copy from `deploy/.env.example`) and set:
+- `DOMAIN`, `REGISTRY`, `IMAGE_TAG`, `JWT_SECRET`
+
+Then deploy on the droplet:
+```bash
+./scripts/deploy.sh
+```
 
 ## Directory Structure
 

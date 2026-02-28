@@ -10,7 +10,7 @@ services:
       - caddy_data:/data      # TLS certificates
       - caddy_config:/config  # Caddy config cache
     environment:
-      - DOMAIN=${DOMAIN:-localhost}
+      - DOMAIN=${DOMAIN}
     depends_on:
       - todo-list
     restart: unless-stopped
@@ -19,13 +19,13 @@ services:
 
   # Example app
   todo-list:
-    image: ${REGISTRY}/a-apps-todo-list:${IMAGE_TAG:-latest}
+    image: ${REGISTRY}/a-apps-todo-list:${IMAGE_TAG}
     pull_policy: always
     container_name: a-apps-todo-list
     environment:
       - PORT=3001
       - BASE_PATH=/todo
-      - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
+      - JWT_SECRET=${JWT_SECRET}
     volumes:
       - ../apps/todo-list/data:/root/data
     restart: unless-stopped
@@ -38,13 +38,13 @@ services:
       - a-apps-network
 
   projects:
-    image: ${REGISTRY}/a-apps-projects:${IMAGE_TAG:-latest}
+    image: ${REGISTRY}/a-apps-projects:${IMAGE_TAG}
     pull_policy: always
     container_name: a-apps-projects
     environment:
       - PORT=3002
       - BASE_PATH=/projects
-      - JWT_SECRET=${JWT_SECRET:-change-this-in-production}
+      - JWT_SECRET=${JWT_SECRET}
     volumes:
       - ../apps/projects/data:/root/data
     restart: unless-stopped
