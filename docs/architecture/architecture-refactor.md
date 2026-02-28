@@ -91,5 +91,5 @@ Adopt **Proposal A**. It is the least disruptive to local development while solv
 
 ## Affected Docs (if implemented later)
 - README (local usage + proxy behavior)
-- docs/patterns.md (URL helper patterns)
-- docs/blog-zero-to-deployed.md (deployment details)
+- docs/reference/patterns.md (URL helper patterns)
+- docs/blog/blog-zero-to-deployed.md (deployment details)

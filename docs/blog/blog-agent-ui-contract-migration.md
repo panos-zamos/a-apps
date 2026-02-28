@@ -4,7 +4,7 @@
 
 ## Context
 
-This repository uses a small UI contract (`docs/design-spec.md`) that enforces:
+This repository uses a small UI contract (`docs/reference/design-spec.md`) that enforces:
 
 - light mode, neutral grayscale
 - semantic HTML
@@ -74,7 +74,7 @@ This removes any dependency on the current working directory or Docker copy step
 
 ### 5) Design spec moved under `docs/`
 
-- `design-spec.md` was relocated to `docs/design-spec.md`.
+- `design-spec.md` was relocated to `docs/reference/design-spec.md`.
 - A small header/preamble artifact was removed so the document is clean Markdown.
 
 ### 6) App template updated to match the contract
@@ -108,4 +108,4 @@ Tests run during the change:
 
 ## Notes / follow-ups
 
-- The design contract is intentionally strict. If you need additional UI patterns, it’s better to extend `custom.css` deliberately (and update `docs/design-spec.md`) than to add one-off classes.
+- The design contract is intentionally strict. If you need additional UI patterns, it’s better to extend `custom.css` deliberately (and update `docs/reference/design-spec.md`) than to add one-off classes.

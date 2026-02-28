@@ -1,0 +1,80 @@
+{
+  "trace_version": "1.0",
+  "task": {
+    "id": null,
+    "title": "Reorganize and clean up repository documentation under docs/",
+    "author": null,
+    "started_at": "2026-02-28T13:15:48Z",
+    "ended_at": "2026-02-28T13:19:21Z"
+  },
+  "agents": [
+    {
+      "name": "pi_coding_agent",
+      "model": "unknown",
+      "role": "documentation"
+    }
+  ],
+  "steps": [
+    {
+      "step_id": 1,
+      "type": "prompt",
+      "actor": "human",
+      "summary": "Examine documentation in docs/ and clean it up and organize it better.",
+      "timestamp": "2026-02-28T13:15:48Z"
+    },
+    {
+      "step_id": 2,
+      "type": "research",
+      "actor": "agent",
+      "summary": "Reviewed existing docs/ files; found mixed audiences (guides, reference, architecture notes, blog posts, UI artifacts) all in one flat folder, plus some outdated Tailwind guidance in reference docs.",
+      "evidence": [
+        "docs/* (initial file listing)",
+        "docs/patterns.md (Tailwind sections)",
+        "docs/llm-prompts.md (Tailwind styling prompt)"
+      ],
+      "timestamp": "2026-02-28T13:16:10Z"
+    },
+    {
+      "step_id": 3,
+      "type": "decision",
+      "actor": "agent",
+      "summary": "Adopted a directory-based docs taxonomy: guides/ (how-to), reference/ (contracts/patterns), architecture/ (proposals/notes), plans/ (app specs), ui/ (mockups/ui-kit), blog/ (historical writeups). Rationale: improves discoverability and reduces churn from mixing long-form posts with operational docs.",
+      "decision": "accepted",
+      "timestamp": "2026-02-28T13:16:40Z"
+    },
+    {
+      "step_id": 4,
+      "type": "implementation",
+      "actor": "agent",
+      "summary": "Moved docs into the new structure using git mv; fixed an accidental double-nested mockups folder; added docs/README.md index; updated cross-links and README/script references to the new paths.",
+      "timestamp": "2026-02-28T13:18:30Z"
+    },
+    {
+      "step_id": 5,
+      "type": "implementation",
+      "actor": "agent",
+      "summary": "Cleaned up reference docs to match the current UI contract: removed Tailwind-centric sections from reference/patterns.md and updated reference/llm-prompts.md to explicitly enforce the UI contract and custom.css-only class usage.",
+      "timestamp": "2026-02-28T13:18:55Z"
+    },
+    {
+      "step_id": 6,
+      "type": "test",
+      "actor": "agent",
+      "summary": "Validated that old doc paths were eliminated by searching for stale references (rg for docs/<oldfile>.md) and verifying the new docs tree.",
+      "timestamp": "2026-02-28T13:19:10Z"
+    },
+    {
+      "step_id": 7,
+      "type": "artifact",
+      "actor": "agent",
+      "summary": "Files added/changed: docs/README.md; updated README.md + scripts/deploy.sh for new doc links; moved docs into docs/{guides,reference,architecture,plans,ui,blog}/; edited docs/reference/{patterns.md,llm-prompts.md} for UI-contract alignment.",
+      "timestamp": "2026-02-28T13:19:21Z"
+    }
+  ],
+  "evaluations": {
+    "tests_run": false,
+    "lint_passed": null,
+    "notes": "No code changes; documentation link integrity checked via ripgrep searches for old paths."
+  },
+  "final_summary": "Reorganized docs/ into purpose-based subfolders, added a docs index (docs/README.md), updated all internal/external references, and removed outdated Tailwind guidance from reference docs in favor of the current UI contract (custom.css-only)."
+}

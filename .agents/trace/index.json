@@ -1,6 +1,15 @@
 {
-  "latest_trace": "trace-19.json",
+  "latest_trace": "trace-20.json",
   "sessions": [
+    {
+      "task": {
+        "id": null,
+        "title": "Reorganize and clean up repository documentation under docs/"
+      },
+      "started_at": "2026-02-28T13:15:48Z",
+      "ended_at": "2026-02-28T13:19:21Z",
+      "trace": "trace-20.json"
+    },
     {
       "task": {
         "id": null,

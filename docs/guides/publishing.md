@@ -35,4 +35,4 @@ cd /opt/a-apps
 ./scripts/deploy.sh
 ```
 
-(or run the compose commands directly from `/opt/a-apps/deploy` – see `docs/deployment.md`).
+(or run the compose commands directly from `/opt/a-apps/deploy` – see [deployment.md](./deployment.md)).

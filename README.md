@@ -68,10 +68,12 @@ Caddy will automatically provision HTTPS certificates for real domains as long a
 
 ### Deployment
 
-See **docs/deployment.md** for the step-by-step droplet setup (and **docs/ops-checklist.md** for a quick ops checklist).
+Documentation index: **docs/README.md**.
+
+See **docs/guides/deployment.md** for the step-by-step droplet setup (and **docs/guides/ops-checklist.md** for a quick ops checklist).
 
 This repo is designed for a **pull-only droplet**:
-- publish images (build + push) from your laptop/CI (see **docs/publishing.md**)
+- publish images (build + push) from your laptop/CI (see **docs/guides/publishing.md**)
 - deploy on the droplet by pulling and restarting containers
 
 On the droplet, create `deploy/.env` (copy from `deploy/.env.example`) and set:
@@ -105,8 +107,13 @@ a-apps/
 │   ├── backup.sh           # Backup SQLite databases
 │   └── hash-password.sh    # Generate password hashes
 ├── docs/                    # Documentation
-│   ├── llm-prompts.md      # Effective prompts for LLM assistance
-│   └── patterns.md         # Common Go/HTMX patterns
+│   ├── README.md           # Docs index
+│   ├── guides/             # Deployment/publishing/ops
+│   ├── reference/          # UI contract, patterns, LLM prompts
+│   ├── architecture/       # Architecture notes and proposals
+│   ├── plans/              # App plans/specs
+│   ├── ui/                 # Mockups + UI kit HTML
+│   └── blog/               # Historical writeups
 ├── templates/               # App template for scaffolding
 │   └── app-template/       # Base structure for new apps
 └── go.work                  # Go workspace configuration
@@ -165,7 +172,7 @@ This project structure is optimized for working with LLM coding assistants:
 - **Reusable patterns:** Reference existing apps as examples
 - **Template-based:** Generate new apps using established patterns
 
-See [docs/llm-prompts.md](docs/llm-prompts.md) for effective prompts.
+See [docs/reference/llm-prompts.md](docs/reference/llm-prompts.md) for effective prompts.
 
 ## Technology Choices
 

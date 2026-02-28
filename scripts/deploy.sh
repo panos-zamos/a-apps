@@ -7,8 +7,8 @@ set -euo pipefail
 # pulling pre-built images and restarting containers.
 #
 # See docs:
-# - docs/deployment.md
-# - docs/publishing.md
+# - docs/guides/deployment.md
+# - docs/guides/publishing.md
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

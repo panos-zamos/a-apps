@@ -84,7 +84,7 @@ If ACME fails, double check:
 - DNS points to the droplet
 - ports 80/443 reachable from the internet
 
-(See also: `docs/ops-checklist.md` for a first-time deploy checklist.)
+See also: [ops-checklist.md](./ops-checklist.md) for a first-time deploy checklist.
 
 ## 4) Troubleshooting TLS (ERR_SSL_PROTOCOL_ERROR)
 

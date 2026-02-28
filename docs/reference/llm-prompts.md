@@ -2,6 +2,14 @@
 
 This document provides effective prompts and strategies for using LLM coding assistants (like GitHub Copilot, Claude, ChatGPT) to work with this codebase.
 
+## Repo constraints to remind the LLM about
+
+- **UI contract**: follow [design-spec.md](./design-spec.md)
+  - no inline styles
+  - use only CSS classes defined in `custom.css`
+  - do not introduce Tailwind/Bootstrap/etc.
+- Prefer small, explicit changes and reuse patterns from existing apps.
+
 ## Why This Structure Works Well with LLMs
 
 1. **Flat, explicit structure** - Easy for LLMs to understand file organization
@@ -181,14 +189,14 @@ This will require login before accessing export.
 ### Style improvements
 
 ```
-Improve the todo list UI:
+Improve the todo list UI (without changing the visual language):
 
-1. Add hover effects to item rows
-2. Use different colors for checked items (gray them out)
-3. Add icons: ✓ for checked, 🗑️ for delete
-4. Make the "Add item" form sticky at top of each store card
+1. Follow the UI contract in docs/reference/design-spec.md
+2. Use only classes from `custom.css` (no new classes, no inline styles)
+3. Prefer spacing, `.panel`, and `.card` over new visual variants
+4. Avoid icons unless explicitly requested
 
-Use Tailwind CSS classes. Reference the current classes in handlers/handler.go.
+Point me to the exact files and show the full updated HTML fragments/handlers.
 ```
 
 ## Debugging with LLM

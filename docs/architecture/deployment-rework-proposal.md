@@ -145,7 +145,7 @@ If you want repeatable boot behavior and log location, you can later wrap compos
 
 To make the workflow obvious, keep docs focused:
 
-- `docs/deployment.md`
+- `docs/guides/deployment.md`
   - exact commands to run on the droplet
   - first-time setup
   - troubleshooting
@@ -153,7 +153,7 @@ To make the workflow obvious, keep docs focused:
 - `deploy/.env.example`
   - the deployment contract with clear explanations
 
-- (optional) `docs/publishing.md`
+- (optional) `docs/guides/publishing.md`
   - how to build/push images (from laptop or CI)
 
 ## Why this is better (summary)

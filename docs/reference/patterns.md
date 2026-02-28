@@ -265,61 +265,51 @@ func (h *Handler) GetItem(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## Tailwind CSS Patterns
+## UI / CSS patterns (UI contract)
 
-### Button Styles
+This repo uses a strict UI contract.
+
+- **Rules**: see [design-spec.md](./design-spec.md)
+- **Do not** introduce Tailwind (or other utility frameworks)
+- **Do not** invent new CSS classes; use the classes provided by `custom.css`
+
+### Buttons
 
 ```html
-<!-- Primary button -->
-<button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-    Click Me
-</button>
-
-<!-- Secondary button -->
-<button class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
-    Cancel
-</button>
-
-<!-- Danger button -->
-<button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
-    Delete
-</button>
+<button class="primary">Save</button>
+<button>Cancel</button>
+<button class="danger">Delete</button>
 ```
 
-### Card/Container
+### Panels (grouped content)
 
 ```html
-<div class="bg-white rounded-lg shadow p-6">
-    <h3 class="text-xl font-bold text-gray-900 mb-4">Card Title</h3>
-    <p class="text-gray-600">Card content</p>
+<section class="panel">
+  <h2>Settings</h2>
+  <p class="muted">Secondary text</p>
+</section>
+```
+
+### Cards (list items)
+
+```html
+<div class="card-list">
+  <a class="card" href="/items/1">
+    <div class="card-header">
+      <span class="card-name">Item</span>
+      <span class="badge badge-dev">development</span>
+    </div>
+    <p class="card-desc">Short description</p>
+  </a>
 </div>
 ```
 
-### Form Input
+### Common layout helpers
 
 ```html
-<input 
-    type="text" 
-    name="field" 
-    placeholder="Enter value"
-    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-/>
-```
-
-### Grid Layout
-
-```html
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Items -->
-</div>
-```
-
-### Flex Row with Gap
-
-```html
-<div class="flex gap-2 items-center">
-    <span class="flex-1">Text</span>
-    <button>Action</button>
+<div class="row space-between">
+  <span class="muted">Left</span>
+  <span>Right</span>
 </div>
 ```
 
@@ -457,13 +447,8 @@ if port == "" {
 - `hx-confirm="Message"` - Confirmation dialog
 - `hx-trigger="click"` - Event that triggers (default)
 
-## Quick Reference: Tailwind Colors
+## Quick Reference: UI contract
 
-- Indigo: Primary actions (`bg-indigo-600`)
-- Gray: Secondary/disabled (`bg-gray-300`)
-- Red: Danger/delete (`bg-red-600`)
-- Green: Success (`bg-green-600`)
-- Blue: Info (`bg-blue-600`)
-- Yellow: Warning (`bg-yellow-600`)
+When in doubt, follow the UI contract:
 
-Use `-50` to `-900` for intensity (50=lightest, 900=darkest)
+- [design-spec.md](./design-spec.md)
