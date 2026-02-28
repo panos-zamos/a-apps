@@ -34,16 +34,18 @@ A monorepo for hosting multiple small web applications with minimal friction. Bu
 
 3. **Access:** http://localhost:3005
 
-### Run All Apps with Docker Compose (Local)
+### Run All Apps with Docker Compose (Production-like)
 
-From the repo root, run all apps plus the Caddy reverse proxy:
+`deploy/docker-compose.yml` is intended for a production-style setup where the droplet **pulls pre-built images from a registry**.
+
+From the repo root:
 
 ```bash
-# Optional: provide env vars (JWT_SECRET, DOMAIN, etc.)
-# cp deploy/.env.example .env
+cp deploy/.env.example deploy/.env
+# edit deploy/.env (DOMAIN, REGISTRY, IMAGE_TAG, JWT_SECRET, ...)
 
-docker compose -f deploy/docker-compose.yml up --build
-# or: make up
+docker compose --env-file deploy/.env -f deploy/docker-compose.yml pull
+docker compose --env-file deploy/.env -f deploy/docker-compose.yml up -d --remove-orphans
 ```
 
 Then access your apps at:
@@ -56,38 +58,24 @@ The compose file sets `BASE_PATH` for each app so redirects and assets work behi
 Stop everything with:
 
 ```bash
-docker compose -f deploy/docker-compose.yml down
-# or: make down
+docker compose --env-file deploy/.env -f deploy/docker-compose.yml down
 ```
 
-If you want to use a custom domain (with HTTPS), set the DOMAIN variable:
-
-```bash
-DOMAIN=yourdomain.com docker compose -f deploy/docker-compose.yml up --build
-```
-
-Caddy will automatically provision HTTPS certificates for real domains.
+Caddy will automatically provision HTTPS certificates for real domains as long as `DOMAIN` in `deploy/.env` is set to the public hostname and ports 80/443 are reachable.
 
 ### Deployment
 
-Set deployment env in `deploy/.env` (copy from `.env.example`). At minimum:
+See **docs/deployment.md** for the step-by-step droplet setup.
 
+At a minimum you must create `deploy/.env` on the droplet (copy from `deploy/.env.example`) and set:
+- `DOMAIN`
+- `REGISTRY`
+- `IMAGE_TAG`
 - `JWT_SECRET`
-- `REGISTRY` (e.g. `registry.digitalocean.com/your-registry`)
-- `IMAGE_TAG` (e.g. `latest`)
 
-Then deploy from your local machine (builds + pushes to the registry, then pulls on the droplet):
-
-```bash
-./scripts/deploy.sh
-```
-
-If you want to run directly on the server without the deploy script:
-
-```bash
-docker compose -f deploy/docker-compose.yml pull
-docker compose -f deploy/docker-compose.yml up -d
-```
+Then:
+- Run `./scripts/deploy.sh` **on the droplet** to pull + restart containers, or
+- Run `./scripts/deploy.sh` **from your laptop** (remote mode) to build+push images, sync code, then restart containers on the droplet.
 
 ## Directory Structure
 
